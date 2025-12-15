@@ -84,12 +84,27 @@ class DashboardTemplateView(LoginRequiredMixin, TemplateView):
             if shops.exists():
                 context['total_branches'] = shops.first().branches.count()
                 
-        # Get Subscription Status
+        
+        # Get Subscription Status (Safe Mode)
+        context['days_left'] = 0 # Default to 0 (expired/immediate action)
+        context['subscription_status'] = 'EXPIRED'
+        context['has_subscription'] = False
+        
         if shops.exists():
             shop = shops.first()
-            if hasattr(shop, 'subscription'):
-                context['subscription'] = shop.subscription
-                context['days_left'] = (shop.subscription.end_date - timezone.now()).days
+            if hasattr(shop, 'subscription') and shop.subscription:
+                try:
+                    sub = shop.subscription
+                    context['subscription'] = sub
+                    context['has_subscription'] = True
+                    context['subscription_status'] = sub.status
+                    
+                    if sub.end_date:
+                        context['days_left'] = (sub.end_date - timezone.now()).days
+                    else:
+                        context['days_left'] = 0
+                except Exception:
+                    pass # Keep defaults
         
         return context
 
