@@ -6,4 +6,5 @@ class SubscriptionsConfig(AppConfig):
     name = 'subscriptions'
 
     def ready(self):
-        import subscriptions.signals
+        # import subscriptions.signals
+        pass

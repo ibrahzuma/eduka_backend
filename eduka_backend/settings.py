@@ -68,7 +68,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'subscriptions.middleware.SubscriptionMiddleware', # Enforce Payments
+    # 'subscriptions.middleware.SubscriptionMiddleware', # Disabled for debugging
     'allauth.account.middleware.AccountMiddleware',
 ]
 
