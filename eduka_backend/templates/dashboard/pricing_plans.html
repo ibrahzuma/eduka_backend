@@ -234,7 +234,7 @@
                         showSuccess();
                     } else if (data.status === 'FAILED') {
                         clearInterval(pollInterval);
-                        showError('Payment failed or was cancelled.');
+                        showError(data.message || 'Payment failed or was cancelled.');
                     }
                 })
                 .catch(err => console.error('Polling error', err));

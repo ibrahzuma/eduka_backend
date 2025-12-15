@@ -96,6 +96,9 @@ class CheckPaymentStatusView(LoginRequiredMixin, View):
         elif api_status in ['FAILED', 'CANCELLED']:
             payment.status = 'FAILED'
             payment.save()
-            return JsonResponse({'status': 'FAILED'})
+            return JsonResponse({
+                'status': 'FAILED', 
+                'message': api_response.get('message', 'Transaction failed')
+            })
             
         return JsonResponse({'status': 'PENDING'})
