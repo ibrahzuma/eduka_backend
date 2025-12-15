@@ -10,6 +10,7 @@ class ClickPesaService:
         self.auth_url = settings.CLICKPESA_AUTH_URL
         self.client_id = settings.CLICKPESA_CLIENT_ID
         self.api_key = settings.CLICKPESA_API_KEY
+        self.checksum_key = settings.CLICKPESA_CHECKSUM_KEY
         self.token = None
 
     def format_phone(self, phone):
@@ -62,25 +63,68 @@ class ClickPesaService:
             logger.error(f"ClickPesa Connection Error: {e}")
             raise e
 
+
+
+    def generate_checksum(self, payload):
+        """
+        Calculate Checksum:
+        1. Sort keys alphabetically
+        2. Concatenate values
+        3. HMAC-SHA256
+        """
+        import hmac
+        import hashlib
+        
+        # Sort keys
+        sorted_keys = sorted(payload.keys())
+        
+        # Concatenate values
+        concat_string = ""
+        for key in sorted_keys:
+            concat_string += str(payload[key])
+            
+        # HMAC-SHA256
+        if not self.checksum_key:
+            logger.warning("Checksum Key not found! Checksum will be invalid.")
+            return "MISSING_KEY"
+            
+        signature = hmac.new(
+            self.checksum_key.encode('utf-8'),
+            concat_string.encode('utf-8'),
+            hashlib.sha256
+        ).hexdigest()
+        
+        return signature
+
     def initiate_ussd_push(self, phone_number, amount, reference):
         """Trigger the USSD Push on user's phone"""
-        url = f"{self.api_url}collection/ussd-push/initiate"
+        # New Endpoint: /third-parties/payments/initiate-ussd-push-request
+        base_url = "https://api.clickpesa.com"
+        url = f"{base_url}/third-parties/payments/initiate-ussd-push-request"
         
         formatted_phone = self.format_phone(phone_number)
         
-        payload = {
-            "mobile_number": formatted_phone,
-            "amount": float(amount), # Ensure it's number
+        # Payload construction
+        payload_data = {
+            "amount": str(int(float(amount))), # Ensure string, maybe int? User said <string>.
             "currency": "TZS",
-            "order_reference": reference,
-            "description": "Subscription Payment"
+            "orderReference": reference,
+            "phoneNumber": formatted_phone
         }
+        
+        # Calculate Checksum (from payload data)
+        checksum = self.generate_checksum(payload_data)
+        
+        # Add checksum to payload
+        payload_data["checksum"] = checksum
         
         try:
             headers = self.get_headers()
-            logger.info(f"Initiating USSD Push to {formatted_phone}: {url}")
             
-            response = requests.post(url, json=payload, headers=headers)
+            logger.info(f"Initiating USSD Push to {formatted_phone}: {url}")
+            logger.info(f"Payload: {payload_data}")
+            
+            response = requests.post(url, json=payload_data, headers=headers)
             
             try:
                 res_json = response.json()
