@@ -18,6 +18,7 @@ urlpatterns = [
     path('sales/', include('sales.urls_frontend')),
     path('purchase/', include('purchase.urls_frontend')),
     path('finance/', include('finance.urls_frontend')),
+    path('subscriptions/', include('subscriptions.urls')),
     path('customers/', include('customers.urls_frontend')),
     path('reports/', include('reports.urls_frontend')),
     path('', include('dashboard.urls_frontend')), # Main Dashboard

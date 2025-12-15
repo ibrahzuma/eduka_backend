@@ -6,7 +6,6 @@
     <div class="text-center mb-5">
         <h1 class="fw-bold text-gray-900 display-6">Choose the Right Plan for Your Shop</h1>
         <p class="text-muted lead">Simple, transparent pricing. Upgrade or downgrade anytime.</p>
-
     </div>
 
     <!-- Container for dynamic cards -->
@@ -23,9 +22,75 @@
     <div class="text-center mt-5 text-muted small">
         <p>Prices are in Tanzanian Shillings (TZS). Need a custom plan? <a href="#">Contact Sales</a>.</p>
     </div>
+
+    <!-- Payment Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white border-0">
+                    <h5 class="modal-title fw-bold">Confirm Payment</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <!-- Step 1: Input -->
+                    <div id="paymentStep1">
+                        <p class="text-muted mb-4">Enter your mobile number to pay <span id="paymentAmount"
+                                class="fw-bold text-dark"></span> via Mobile Money.</p>
+
+                        <div class="mb-3 text-start">
+                            <label class="form-label small text-uppercase text-muted fw-bold">Mobile Number</label>
+                            <input type="tel" id="mobileNumber" class="form-control form-control-lg bg-light border-0"
+                                placeholder="07XXXXXXXX" required>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="button" class="btn btn-primary btn-lg fw-bold" onclick="initiatePayment()">Pay
+                                with Mobile Money</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Loading / Polling -->
+                    <div id="paymentStep2" class="d-none py-3">
+                        <div class="spinner-grow text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h5 class="fw-bold">Payment Initiated</h5>
+                        <p class="text-muted">Please check your phone ( <span id="displayPhone"></span> ) and enter your
+                            PIN to complete the transaction.</p>
+                        <p class="small text-warning mt-3"><i class="bi bi-info-circle"></i> Waiting for confirmation...
+                        </p>
+                    </div>
+
+                    <!-- Step 3: Success -->
+                    <div id="paymentStep3" class="d-none py-3">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                        <h4 class="fw-bold mt-3">Payment Successful!</h4>
+                        <p class="text-muted">Your subscription is now active.</p>
+                        <div class="d-grid mt-4">
+                            <button class="btn btn-success" onclick="location.reload()">Continue</button>
+                        </div>
+                    </div>
+                    <!-- Step 4: Error -->
+                    <div id="paymentStep4" class="d-none py-3">
+                        <i class="bi bi-x-circle-fill text-danger" style="font-size: 4rem;"></i>
+                        <h4 class="fw-bold mt-3">Payment Failed</h4>
+                        <p class="text-muted" id="errorMessage">Something went wrong.</p>
+                        <div class="d-grid mt-4">
+                            <button class="btn btn-secondary" onclick="resetModal()">Try Again</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
+    let selectedPlanId = null;
+    let selectedCycle = null;
+    let pollInterval = null;
+
     document.addEventListener("DOMContentLoaded", function () {
         fetchPlans();
     });
@@ -35,7 +100,6 @@
             .then(response => response.json())
             .then(data => {
                 if (data.length > 0) {
-                    // Filter for active plans first (important for Superusers who receive all plans)
                     const activePlan = data.find(p => p.is_active) || data[0];
                     renderPlanCycles(activePlan);
                 } else {
@@ -63,13 +127,8 @@
 
         cycles.forEach(cycle => {
             const price = plan[`price_${cycle.id}`];
-            if (price > 0) { // Only show if price is set
+            if (price > 0) {
                 const formattedPrice = parseFloat(price).toLocaleString('en-US');
-
-                // Feature List Customization
-                // 1. 1 Shop + Daily Report
-                // 2. 3 Users + Stock Tracking
-                // 3. 500 Products + 24/7 Support
 
                 const cardHtml = `
                 <div class="col-lg-4 col-md-6">
@@ -83,31 +142,17 @@
                                  <h2 class="fw-bold text-dark mb-0">${formattedPrice} <small class="fs-6 text-muted">TZS</small></h2>
                             </div>
 
-                            <ul class="list-unstyled text-start mb-5 mx-auto small text-muted">
-                                <li class="mb-3 d-flex align-items-center">
-                                    <i class="bi bi-check-circle-fill text-success me-2"></i> 
-                                    <span>Daily Report</span>
-                                </li>
-                                 <li class="mb-3 d-flex align-items-center">
-                                    <i class="bi bi-check-circle-fill text-success me-2"></i> 
-                                    <span>Stock Tracking</span>
-                                </li>
-                                 <li class="mb-3 d-flex align-items-center">
-                                    <i class="bi bi-check-circle-fill text-success me-2"></i> 
-                                    <span>24/7 Support</span>
-                                </li>
+                             <ul class="list-unstyled text-start mb-5 mx-auto small text-muted">
+                                <li class="mb-3 d-flex align-items-center"><i class="bi bi-check-circle-fill text-success me-2"></i> <span>Daily Report</span></li>
+                                <li class="mb-3 d-flex align-items-center"><i class="bi bi-check-circle-fill text-success me-2"></i> <span>Stock Tracking</span></li>
+                                <li class="mb-3 d-flex align-items-center"><i class="bi bi-check-circle-fill text-success me-2"></i> <span>24/7 Support</span></li>
                             </ul>
 
                             <div class="mt-auto">
-                                 <form method="post" action="">
-                                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-                                    <input type="hidden" name="plan_id" value="${plan.id}">
-                                    <input type="hidden" name="cycle" value="${cycle.id.toUpperCase()}">
-                                    
-                                    <button type="submit" class="btn btn-primary fw-bold w-100 py-3 shadow-sm scale-on-hover">
-                                        Choose ${cycle.label}
-                                    </button>
-                                </form>
+                                <button onclick="openPaymentModal('${plan.id}', '${cycle.id}', '${formattedPrice}')" 
+                                    class="btn btn-primary fw-bold w-100 py-3 shadow-sm scale-on-hover px-4">
+                                    Subscribe ${cycle.label}
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -116,6 +161,96 @@
                 container.innerHTML += cardHtml;
             }
         });
+    }
+
+    function openPaymentModal(planId, cycle, price) {
+        selectedPlanId = planId;
+        selectedCycle = cycle;
+        document.getElementById('paymentAmount').innerText = price + " TZS";
+
+        // Reset Steps
+        resetModal();
+
+        const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+        modal.show();
+    }
+
+    function resetModal() {
+        document.getElementById('paymentStep1').classList.remove('d-none');
+        document.getElementById('paymentStep2').classList.add('d-none');
+        document.getElementById('paymentStep3').classList.add('d-none');
+        document.getElementById('paymentStep4').classList.add('d-none');
+        document.getElementById('mobileNumber').value = '';
+        clearInterval(pollInterval);
+    }
+
+    function initiatePayment() {
+        const phone = document.getElementById('mobileNumber').value;
+        if (!phone) {
+            alert("Please enter a phone number");
+            return;
+        }
+
+        // Show Loading
+        document.getElementById('paymentStep1').classList.add('d-none');
+        document.getElementById('paymentStep2').classList.remove('d-none');
+        document.getElementById('displayPhone').innerText = phone;
+
+        // API Call
+        fetch('/subscriptions/pay/initiate/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                plan_id: selectedPlanId,
+                cycle: selectedCycle,
+                phone_number: phone
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Start Polling
+                    startPolling(data.payment_id);
+                } else {
+                    showError(data.message || 'Payment initiation failed.');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showError('Connection error.');
+            });
+    }
+
+    function startPolling(paymentId) {
+        pollInterval = setInterval(() => {
+            fetch(`/subscriptions/pay/status/${paymentId}/`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'COMPLETED') {
+                        clearInterval(pollInterval);
+                        showSuccess();
+                    } else if (data.status === 'FAILED') {
+                        clearInterval(pollInterval);
+                        showError('Payment failed or was cancelled.');
+                    }
+                })
+                .catch(err => console.error('Polling error', err));
+        }, 3000); // Check every 3 seconds
+    }
+
+    function showSuccess() {
+        document.getElementById('paymentStep2').classList.add('d-none');
+        document.getElementById('paymentStep3').classList.remove('d-none');
+    }
+
+    function showError(msg) {
+        document.getElementById('paymentStep1').classList.add('d-none');
+        document.getElementById('paymentStep2').classList.add('d-none');
+        document.getElementById('paymentStep4').classList.remove('d-none');
+        document.getElementById('errorMessage').innerText = msg;
     }
 </script>
 
