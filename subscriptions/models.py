@@ -2,15 +2,7 @@ from django.db import models
 from django.utils import timezone
 from shops.models import Shop
 
-class SubscriptionPlan(models.Model):
-    CYCLE_CHOICES = [
-        ('MONTHLY', 'Monthly'),
-        ('YEARLY', 'Yearly'),
-        ('LIFETIME', 'Lifetime'),
-    ]
 
-    name = models.CharField(max_length=100) # e.g. Free, Starter, Pro
-    slug = models.SlugField(unique=True)
 class SubscriptionPlan(models.Model):
     name = models.CharField(max_length=100) # e.g. Free, Starter, Pro
     slug = models.SlugField(unique=True)
