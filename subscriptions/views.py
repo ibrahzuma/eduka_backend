@@ -45,20 +45,26 @@ class InitiatePaymentView(LoginRequiredMixin, View):
         )
         
         # Call API
-        service = ClickPesaService()
-        result = service.initiate_ussd_push(phone, amount, reference)
-        
-        if result.get('success', True): # Adjust based on actual API response structure
-             return JsonResponse({
-                 'success': True, 
-                 'payment_id': payment.id,
-                 'reference': reference,
-                 'message': 'USSD Push Sent'
-             })
-        else:
-             payment.status = 'FAILED'
-             payment.save()
-             return JsonResponse({'success': False, 'message': 'Failed to initiate payment'})
+        try:
+            service = ClickPesaService()
+            result = service.initiate_ussd_push(phone, amount, reference)
+            
+            if result.get('success', False): 
+                 return JsonResponse({
+                     'success': True, 
+                     'payment_id': payment.id,
+                     'reference': reference,
+                     'message': 'USSD Push Sent'
+                 })
+            else:
+                 payment.status = 'FAILED'
+                 payment.save()
+                 error_msg = result.get('message', 'Unknown Error')
+                 return JsonResponse({'success': False, 'message': f'Payment Gateway Error: {error_msg}'})
+        except Exception as e:
+            payment.status = 'FAILED'
+            payment.save()
+            return JsonResponse({'success': False, 'message': f'System Error: {str(e)}'})
 
 class CheckPaymentStatusView(LoginRequiredMixin, View):
     def get(self, request, payment_id):
