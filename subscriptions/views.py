@@ -24,7 +24,10 @@ class InitiatePaymentView(LoginRequiredMixin, View):
         plan = get_object_or_404(SubscriptionPlan, id=plan_id)
         
         # Generate Reference
-        reference = f"SUB-{shop.id}-{uuid.uuid4().hex[:8].upper()}"
+        # Generate Reference (Alphanumeric only)
+        # Old: SUB-{shop.id}-{uuid} (invalid due to hyphens)
+        # New: SUB{shop.id}{uuid} 
+        reference = f"SUB{shop.id}X{uuid.uuid4().hex[:10].upper()}"
         amount = plan.price_monthly # Default to monthly for now
         
         # Create Pending Payment Record
