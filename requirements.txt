@@ -5,3 +5,6 @@ django-cors-headers
 python-dotenv
 gunicorn
 whitenoise
+openpyxl
+reportlab
+Pillow
