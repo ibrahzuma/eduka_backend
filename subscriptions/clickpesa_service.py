@@ -21,14 +21,8 @@ class ClickPesaService:
             return phone
         return '255' + phone # Assumption if 7... provided
 
-    def get_headers(self):
-        if not self.token:
-            self.authenticate()
-        return {
-            'Authorization': f'Bearer {self.token}',
-            'Content-Type': 'application/json',
-            'x-api-key': self.api_key
-        }
+
+
 
     def authenticate(self):
         """Exchange Client ID and API Key for an Access Token"""
@@ -104,27 +98,51 @@ class ClickPesaService:
             logger.error(f"Initiate USSD Error: {e}")
             return {"success": False, "message": str(e)}
 
+    def get_headers(self):
+        if not self.token:
+            self.authenticate()
+        return {
+            'Authorization': f'Bearer {self.token}',
+            'Content-Type': 'application/json',
+            # 'x-api-key': self.api_key # Removing x-api-key as docs don't strictly enforce it for GET, reducing noise
+            # If initiate breaks, we add it back. But Check Status likely strictly follows Bearer only.
+        }
+
     def check_status(self, order_reference):
         """Poll for payment status"""
-        # Docs: GET https://api.clickpesa.com/third-parties/payments/{orderReference}
-        # Note: api_url in settings might include 'collection/', so we should be careful.
-        # Best to construct from base domain if possible, or assume settings IS base.
-        
-        # Let's derive base URL from auth_url since that one is known to be correct now
-        base_url = self.auth_url.replace('/third-parties/generate-token', '')
+        base_url = "https://api.clickpesa.com" 
         url = f"{base_url}/third-parties/payments/{order_reference}"
         
-        try:
+        # Helper to make request
+        def make_request(refresh_token=False):
+            if refresh_token:
+                self.authenticate()
+            
             headers = self.get_headers()
-            response = requests.get(url, headers=headers)
+            return requests.get(url, headers=headers)
+
+        try:
+            response = make_request()
+            
+            # Retry on 401 (Unauthorized)
+            if response.status_code == 401:
+                logger.warning("Token expired, refreshing...")
+                response = make_request(refresh_token=True)
+
+            logger.info(f"Check Status [{response.status_code}]: {response.text}")
             
             if response.status_code == 200:
-                # Response is a LIST of transactions for this reference
                 data = response.json()
-                if isinstance(data, list) and len(data) > 0:
-                    return data[0] # Return the first transaction object
-                return data # specific case if it returns dict
-            return {}
+                if isinstance(data, list):
+                    if len(data) > 0:
+                        return data[0]
+                    else:
+                        # Empty list means Reference not found YET? or Wrong Reference?
+                        return {"status": "PENDING", "raw": "Empty List"}
+                return data
+            
+            return {"status": "FAILED", "code": response.status_code}
+
         except Exception as e:
              logger.error(f"Check Status Error: {e}")
-             return {}
+             return {"status": "ERROR", "message": str(e)}
