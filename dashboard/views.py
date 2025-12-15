@@ -92,19 +92,20 @@ class DashboardTemplateView(LoginRequiredMixin, TemplateView):
         
         if shops.exists():
             shop = shops.first()
-            if hasattr(shop, 'subscription') and shop.subscription:
-                try:
-                    sub = shop.subscription
-                    context['subscription'] = sub
-                    context['has_subscription'] = True
-                    context['subscription_status'] = sub.status
-                    
-                    if sub.end_date:
-                        context['days_left'] = (sub.end_date - timezone.now()).days
-                    else:
-                        context['days_left'] = 0
-                except Exception:
-                    pass # Keep defaults
+            try:
+                # Accessing shop.subscription raises DoesNotExist if missing
+                sub = shop.subscription
+                
+                context['subscription'] = sub
+                context['has_subscription'] = True
+                context['subscription_status'] = sub.status
+                
+                if sub.end_date:
+                    context['days_left'] = (sub.end_date - timezone.now()).days
+                else:
+                    context['days_left'] = 0
+            except Exception:
+                pass # Subscription does not exist, keep defaults
         
         return context
 
