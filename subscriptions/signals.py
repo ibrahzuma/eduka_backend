@@ -14,7 +14,15 @@ def create_shop_subscription(sender, instance, created, **kwargs):
             defaults={
                 'name': 'Free Trial',
                 'description': '7-Day Free Trial',
-                'price_monthly': 0.00
+                'price_daily': 0.00,
+                'price_weekly': 0.00,
+                'price_monthly': 0.00,
+                'price_quarterly': 0.00,
+                'price_biannually': 0.00,
+                'price_yearly': 0.00,
+                'max_shops': 1,
+                'max_users': 1,
+                'max_products': 50
             }
         )
         
