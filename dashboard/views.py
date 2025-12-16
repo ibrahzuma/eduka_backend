@@ -609,6 +609,11 @@ class DashboardSummaryView(APIView):
             data['type'] = 'Global'
             data['total_shops'] = Shop.objects.count()
             data['total_sales_volume'] = Sale.objects.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+            
+            # Subscription Revenue
+            from subscriptions.models import SubscriptionPayment
+            data['total_subscription_revenue'] = SubscriptionPayment.objects.filter(status='COMPLETED').aggregate(Sum('amount'))['amount__sum'] or 0
+            
             data['recent_sales'] = Sale.objects.order_by('-created_at')[:5].values('id', 'total_amount', 'created_at')
         else:
             data['type'] = 'Tenant'

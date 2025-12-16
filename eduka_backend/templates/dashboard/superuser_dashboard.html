@@ -169,15 +169,16 @@
         </div>
 
         <!-- Metric 4: Subs (Placeholder) -->
+        <!-- Metric 4: Subscription Revenue -->
         <div class="col-xl-3 col-md-6">
             <div class="metric-card-saas">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <div class="metric-icon-wrapper bg-warning bg-opacity-10 text-warning">
-                            <i class="bi bi-star"></i>
+                            <i class="bi bi-wallet2"></i>
                         </div>
-                        <div class="metric-value">0</div>
-                        <div class="metric-label">Pro Subscribers</div>
+                        <div class="metric-value" id="subscription-revenue-display">0</div>
+                        <div class="metric-label">Subscription Revenue</div>
                     </div>
                 </div>
             </div>
@@ -288,4 +289,20 @@
         </div>
     </div>
 </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/api/dashboard/summary/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.total_subscription_revenue !== undefined) {
+                    // simple formatting or use a library if available
+                    let val = parseFloat(data.total_subscription_revenue);
+                    document.getElementById('subscription-revenue-display').innerText = val.toLocaleString();
+                }
+            })
+            .catch(err => console.error(err));
+    });
+</script>
 {% endblock %}
