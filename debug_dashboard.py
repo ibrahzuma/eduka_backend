@@ -19,13 +19,14 @@ User = get_user_model()
 print("--- DIAGNOSTIC START ---")
 
 try:
-    # 1. Get a test user
-    user = User.objects.first()
+    # 1. Get a test user (Non-Superuser)
+    user = User.objects.filter(is_superuser=False).first()
     if not user:
-        print("ERROR: No users found in database.")
-        sys.exit(1)
+        print("WARNING: No non-superuser found. Testing with ANY user.")
+        user = User.objects.first()
         
     print(f"Testing with user: {user.username} (ID: {user.id})")
+    print(f"Is Superuser: {user.is_superuser}")
     
     # 2. Simulate Request
     factory = RequestFactory()
