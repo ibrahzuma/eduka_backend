@@ -17,22 +17,28 @@ class SubscriptionMiddleware:
             return self.get_response(request)
 
         # Explicitly Allowed Paths (Whitelist)
-        # We allow the dashboard so users can see the 'Expired' banner and navigate to pricing
-        allowed_paths = [
-            reverse('dashboard'),        # Main Dashboard (Banner is here)
-            reverse('shop_pricing'),     # Pricing Page
-            '/subscriptions/',           # Payment processing
-            '/admin/',                   # Admin panel
-            '/static/',                  # Assets
-            '/media/',                   # Media
-            '/accounts/',                # Auth (Login/Logout/Password Reset)
-            '/api/auth/',                # login/register is public
-            '/api/pricing/',             # pricing is public
-            '/api/donations/',           # donations usually public
-        ]
-        
-        # Check if current path is allowed
-        if any(request.path.startswith(path) for path in allowed_paths):
+        try:
+            allowed_paths = [
+                reverse('dashboard'),        # Main Dashboard
+                reverse('shop_pricing'),     # Pricing Page
+                '/subscriptions/',           # Payment processing
+                '/admin/',                   # Admin panel
+                '/static/',                  # Assets
+                '/media/',                   # Media
+                '/accounts/',                # Auth
+                '/api/auth/',                # Public APIs
+                '/api/pricing/',             
+                '/api/donations/',           
+            ]
+            
+            # Check if current path is allowed
+            if any(request.path.startswith(path) for path in allowed_paths):
+                return self.get_response(request)
+        except Exception:
+            # Fallback: if reverse() fails, we might be in trouble, 
+            # but crashing the whole site is worse. 
+            # We could return get_response(request) to fail open, or log it.
+            # Let's fail open (allow access) to prevent 500 loop.
             return self.get_response(request)
 
         # Check User's Shop Subscription
