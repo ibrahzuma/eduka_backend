@@ -113,6 +113,14 @@ class DashboardTemplateView(LoginRequiredMixin, TemplateView):
                     context['days_left'] = 0
             except Exception:
                 pass # Subscription does not exist, keep defaults
+
+        # Calculate Banner Visibility (Backend Logic for Safety)
+        # Show if: Less than 7 days left, OR Expired, OR No Subscription
+        context['show_subscription_banner'] = (
+            context['days_left'] <= 7 or 
+            context['subscription_status'] == 'EXPIRED' or 
+            not context['has_subscription']
+        )
         
         return context
 
