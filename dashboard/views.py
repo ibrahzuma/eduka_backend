@@ -130,6 +130,13 @@ class DashboardTemplateView(LoginRequiredMixin, TemplateView):
                     class MockSub:
                         plan = MockPlan()
                     context['subscription'] = MockSub()
+                else:
+                    # Expired and No DB Record
+                    class MockPlan:
+                        name = "Free Tier"
+                    class MockSub:
+                        plan = MockPlan()
+                    context['subscription'] = MockSub()
 
         # Calculate Banner Visibility (Backend Logic for Safety)
         # Show if: Less than 7 days left, OR Expired, OR No Subscription
