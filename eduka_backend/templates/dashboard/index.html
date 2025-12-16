@@ -104,8 +104,13 @@
                     {% else %}
                     <i class="bi bi-exclamation-triangle-fill text-warning me-3 fs-3"></i>
                     <div>
-                        <h6 class="mb-0 fw-bold">{{ days_left }} Days remaining on your {{ subscription.plan.name }}
-                            plan</h6>
+                        <h6 class="mb-0 fw-bold">
+                            {% if subscription_status == 'TRIAL' %}
+                            {{ days_left }} Days remaining of Free Trial
+                            {% else %}
+                            {{ days_left }} Days remaining on your {{ subscription.plan.name }} plan
+                            {% endif %}
+                        </h6>
                         <small class="text-muted">Renew now to avoid service interruption.</small>
                     </div>
                     {% endif %}

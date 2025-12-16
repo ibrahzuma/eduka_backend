@@ -112,7 +112,24 @@ class DashboardTemplateView(LoginRequiredMixin, TemplateView):
                 else:
                     context['days_left'] = 0
             except Exception:
-                pass # Subscription does not exist, keep defaults
+                pass # Subscription does not exist
+
+            # Fallback: Check Shop Registration Date for "Hidden" Trial
+            if not context['has_subscription']:
+                # Calculate days since registration
+                days_since_reg = (timezone.now() - shop.created_at).days
+                
+                if days_since_reg < 7:
+                    # User is within 7-day window, grant virtual trial status
+                    context['has_subscription'] = True
+                    context['subscription_status'] = 'TRIAL'
+                    context['days_left'] = 7 - days_since_reg
+                    # Mock a plan name for the template
+                    class MockPlan:
+                        name = "Free Trial"
+                    class MockSub:
+                        plan = MockPlan()
+                    context['subscription'] = MockSub()
 
         # Calculate Banner Visibility (Backend Logic for Safety)
         # Show if: Less than 7 days left, OR Expired, OR No Subscription
