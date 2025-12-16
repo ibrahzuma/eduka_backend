@@ -14,7 +14,7 @@ def verify_ui_logic():
     print("\n[1] Checking Login Page Logo...")
     response = client.get('/accounts/login/')
     content = response.content.decode()
-    if 'src="/static/img/eduka_logo.png"' in content:
+    if 'src="/static/img/logoeduka.png"' in content:
         print("Login Page: Logo Image Found.")
     else:
         print("Login Page: Logo Image NOT Found.")
