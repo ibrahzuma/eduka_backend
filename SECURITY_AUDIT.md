@@ -65,3 +65,17 @@ Ensure `CORS_ALLOWED_ORIGINS` matches the production domain.
     CSRF_COOKIE_SECURE=True
     ```
 3.  **Deploy**: Pull changes and restart services.
+
+---
+
+## 4. API Security Addendum (Step 2)
+
+### Findings
+*   **Permissions**: Most views manually check `IsAuthenticated`, which is good.
+*   **Gap**: The project lacks a **Global Default Permission**, meaning if a developer forgets to add `permission_classes`, the view is public by default.
+*   **Gap**: No **Throttling (Rate Limiting)** is configured, leaving APIs exposed to brute-force or spam attacks.
+
+### Remediation
+We will update `settings.py` to:
+1.  **Set Global Default Permission**: `IsAuthenticated` (Safe by default).
+2.  **Enable Throttling**: Limit anonymous users to 20/min and authenticated users to 100/min.
