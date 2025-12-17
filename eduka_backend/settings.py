@@ -21,6 +21,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.getenv('DEBUG') == 'True'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -44,9 +47,7 @@ if not DEBUG:
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG') == 'True'
+
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',') + ['eduka.ehub.co.tz', 'ehub.co.tz']
 
