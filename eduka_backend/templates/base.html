@@ -684,6 +684,31 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            // Sidebar Toggle Logic for Mobile (Placed first to ensure execution)
+            const sidebar = document.querySelector('.sidebar');
+            const toggleBtn = document.getElementById('sidebarToggleTop');
+
+            // Create Overlay
+            if (!document.querySelector('.sidebar-overlay')) {
+                const overlay = document.createElement('div');
+                overlay.className = 'sidebar-overlay';
+                document.body.appendChild(overlay);
+
+                if (toggleBtn && sidebar) {
+                    toggleBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        sidebar.classList.toggle('toggled');
+                        overlay.classList.toggle('show');
+                    });
+
+                    // Close when clicking overlay
+                    overlay.addEventListener('click', function () {
+                        sidebar.classList.remove('toggled');
+                        overlay.classList.remove('show');
+                    });
+                }
+            }
+
             const badge = document.getElementById('notification-badge');
             const list = document.getElementById('notification-list');
             const bell = document.getElementById('alertsDropdown');
@@ -770,28 +795,7 @@
                     });
             });
 
-            // Sidebar Toggle Logic for Mobile
-            const sidebar = document.querySelector('.sidebar');
-            const toggleBtn = document.getElementById('sidebarToggleTop');
 
-            // Create Overlay
-            const overlay = document.createElement('div');
-            overlay.className = 'sidebar-overlay';
-            document.body.appendChild(overlay);
-
-            if (toggleBtn && sidebar) {
-                toggleBtn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    sidebar.classList.toggle('toggled');
-                    overlay.classList.toggle('show');
-                });
-
-                // Close when clicking overlay
-                overlay.addEventListener('click', function () {
-                    sidebar.classList.remove('toggled');
-                    overlay.classList.remove('show');
-                });
-            }
         });
 </body >
 
