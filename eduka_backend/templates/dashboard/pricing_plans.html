@@ -136,11 +136,21 @@
         fetch('/api/pricing/')
             .then(response => response.json())
             .then(data => {
+                const container = document.getElementById('plansContainer');
                 if (data.length > 0) {
-                    const activePlan = data.find(p => p.is_active) || data[0];
-                    renderPlanCycles(activePlan);
+                    container.innerHTML = ''; // Clear once before rendering all
+                    data.forEach(plan => {
+                        if (plan.is_active) {
+                            renderPlanCycles(plan);
+                        }
+                    });
+
+                    // If after trying to render all plans, still empty (e.g. all prices 0)
+                    if (container.children.length === 0) {
+                        container.innerHTML = '<div class="col-12 text-center text-muted"><p>No subscription options currently available.</p></div>';
+                    }
                 } else {
-                    document.getElementById('plansContainer').innerHTML = '<div class="text-center text-muted">No plans available.</div>';
+                    container.innerHTML = '<div class="text-center text-muted">No plans available.</div>';
                 }
             })
             .catch(error => {
@@ -151,7 +161,7 @@
 
     function renderPlanCycles(plan) {
         const container = document.getElementById('plansContainer');
-        container.innerHTML = '';
+        // Removed container.innerHTML = '' to allow appending
 
         const cycles = [
             { id: 'daily', label: 'Daily', suffix: '/ day' },
@@ -164,14 +174,15 @@
 
         cycles.forEach(cycle => {
             const price = plan[`price_${cycle.id}`];
+            // Render if price exists and is greater than 0
             if (price > 0) {
                 const formattedPrice = parseFloat(price).toLocaleString('en-US');
 
                 const cardHtml = `
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-6 fade-in-up">
                     <div class="card h-100 border-0 shadow-lg rounded-4 overflow-hidden text-center transition-hover">
                         <div class="bg-primary bg-opacity-10 py-2">
-                             <h4 class="fw-bold text-primary mb-0 text-uppercase small spacing-wide">${cycle.label} Plan</h4>
+                             <h4 class="fw-bold text-primary mb-0 text-uppercase small spacing-wide">${plan.name} - ${cycle.label}</h4>
                         </div>
                         
                         <div class="card-body p-5 d-flex flex-column">
@@ -195,7 +206,7 @@
                     </div>
                 </div>
                 `;
-                container.innerHTML += cardHtml;
+                container.insertAdjacentHTML('beforeend', cardHtml);
             }
         });
     }
