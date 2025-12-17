@@ -22,12 +22,16 @@
     .pos-grid-wrapper {
         flex-grow: 1;
         overflow-y: auto;
+        overflow-x: auto;
+        /* Enable horizontal scrolling */
         padding: 0;
         position: relative;
     }
 
     .excel-table {
         width: 100%;
+        min-width: 600px;
+        /* Force minimum width to prevent squishing on phones */
         border-collapse: collapse;
     }
 
