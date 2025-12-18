@@ -110,6 +110,50 @@ class RoleCreateView(LoginRequiredMixin, View):
         ]
         return render(request, 'users/role_create.html', {'form': form, 'modules': modules})
 
+class RoleUpdateView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        role = get_object_or_404(Role, pk=pk)
+        form = RoleForm(instance=role)
+        modules = [
+            'Dashboard', 'Sales', 'Purchases', 'Products', 'Services', 'Inventory', 
+            'Returns', 'Clients', 'Finance', 'Expenses', 'Reports', 'Branches', 'Users', 'Settings'
+        ]
+        return render(request, 'users/role_edit.html', {'form': form, 'role': role, 'modules': modules})
+
+    def post(self, request, pk):
+        role = get_object_or_404(Role, pk=pk)
+        form = RoleForm(request.POST, instance=role)
+        if form.is_valid():
+            role = form.save(commit=False)
+            
+            # Process Permissions
+            permissions = {}
+            modules = [
+                'Dashboard', 'Sales', 'Purchases', 'Products', 'Services', 'Inventory', 
+                'Returns', 'Clients', 'Finance', 'Expenses', 'Reports', 'Branches', 'Users', 'Settings'
+            ]
+            for module in modules:
+                module_lower = module.lower()
+                module_perms = []
+                if request.POST.get(f'{module_lower}_view'): module_perms.append('view')
+                if request.POST.get(f'{module_lower}_create'): module_perms.append('create')
+                if request.POST.get(f'{module_lower}_edit'): module_perms.append('edit')
+                if request.POST.get(f'{module_lower}_delete'): module_perms.append('delete')
+                
+                if module_perms:
+                    permissions[module_lower] = module_perms
+            
+            role.permissions = permissions
+            role.save()
+            messages.success(request, 'Role updated successfully!', extra_tags='success')
+            return redirect('role_list')
+        
+        modules = [
+            'Dashboard', 'Sales', 'Purchases', 'Products', 'Services', 'Inventory', 
+            'Returns', 'Clients', 'Finance', 'Expenses', 'Reports', 'Branches', 'Users', 'Settings'
+        ]
+        return render(request, 'users/role_edit.html', {'form': form, 'role': role, 'modules': modules})
+
 from .forms import EmployeeForm
 from django.contrib.auth import get_user_model
 User = get_user_model()

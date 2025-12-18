@@ -8,6 +8,7 @@ urlpatterns = [
     path('logout/', views_frontend.custom_logout_view, name='logout'),
     path('roles/', views_frontend.RoleListView.as_view(), name='role_list'),
     path('roles/create/', views_frontend.RoleCreateView.as_view(), name='role_create'),
+    path('roles/<int:pk>/edit/', views_frontend.RoleUpdateView.as_view(), name='role_edit'),
     path('employees/', views_frontend.EmployeeListView.as_view(), name='employee_list'),
     path('employees/create/', views_frontend.EmployeeCreateView.as_view(), name='employee_create'),
     path('employees/<int:pk>/edit/', views_frontend.EmployeeUpdateView.as_view(), name='employee_edit'),
