@@ -129,7 +129,7 @@ class EmployeeEditForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'phone', 'assigned_role', 'branch', 'password']
+        fields = ['username', 'email', 'phone', 'assigned_role', 'branch']
         labels = {
             'username': 'Username (for Login)',
             'email': 'Email Address',
