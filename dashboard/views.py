@@ -101,9 +101,10 @@ class DashboardTemplateView(LoginRequiredMixin, TemplateView):
             # For now, let's assume employees shouldn't see sensitive purchase data or just filter by shop
             # If we strictly follow "only show his staff" (stuff), maybe hide purchases? 
             # Letting it show shop purchases for now but could be restricted.
-            if getattr(user, 'role', None) == 'EMPLOYEE':
-                 purchases = PurchaseOrder.objects.none() # Hide purchases for basic employees? Or filter by 'created_by'? 
-                 # Let's hide to be safe/strict on "his stuff"
+            # Tenant Purchases
+            if getattr(user, 'role', None) == 'EMPLOYEE' and not (getattr(user, 'branch', None) or getattr(user, 'shop', None)):
+                 # Only restrict if NOT assigned to a branch/shop (safety fallback)
+                 purchases = PurchaseOrder.objects.none() 
             else:
                 purchases = PurchaseOrder.objects.filter(shop__in=shops)
 

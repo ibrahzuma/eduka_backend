@@ -24,6 +24,10 @@ def has_permission(context, module, action='view'):
         
     # 2. Employees check assigned_role
     if user.role == 'EMPLOYEE':
+        # BRANCH OVERRIDE: Full access if assigned to branch
+        if getattr(user, 'branch', None) or getattr(user, 'shop', None):
+            return True
+
         if not user.assigned_role:
             return False # Employee without role has no access (or basic access?)
             
@@ -35,7 +39,6 @@ def has_permission(context, module, action='view'):
         module_perms = perms.get(module, [])
         
         # Check if action is in module permissions
-        # Note: permissions are lists like ['view', 'create', 'edit', 'delete']
         return action in module_perms
         
     return False
