@@ -89,7 +89,10 @@ class DashboardTemplateView(LoginRequiredMixin, TemplateView):
             if getattr(user, 'role', None) == 'EMPLOYEE':
                 # "Show his staff" -> interpreted as "Show his own stats" based on common requirements
                 # or if manager, show all? User said "only show his staff" -> likely "only show his stuff" or "sales made by him"
-                sales = sales.filter(cashier=user)
+                # UPDATE: User requested "See all things without exception" if assigned to branch.
+                # So we show ALL sales for the shop/branch.
+                # sales = sales.filter(cashier=user) # RESTRICTION REMOVED
+                pass
 
             context['total_sales_volume'] = sales.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
             context['sales_period'] = sales.filter(created_at__date__gte=start_date).aggregate(Sum('total_amount'))['total_amount__sum'] or 0

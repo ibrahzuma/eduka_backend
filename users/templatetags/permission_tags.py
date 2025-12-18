@@ -54,6 +54,12 @@ def can_view(user, module):
         return True
         
     if user.role == 'EMPLOYEE':
+        # BRANCH OVERRIDE: If employee has a branch, they see EVERYTHING in the UI (dropdowns)
+        # This satisfies "see all things in the dashboard when he is assign to a branch without exception"
+        if getattr(user, 'branch', None) or getattr(user, 'shop', None):
+             # Implicitly grant 'view' to everything if they are a valid branch employee
+             return ['view'] 
+
         if not user.assigned_role:
             print("DEBUG: Employee has no role")
             return False

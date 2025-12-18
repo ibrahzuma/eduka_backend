@@ -10,10 +10,18 @@ from django.db import transaction
 
 class BaseShopView(LoginRequiredMixin):
     def get_shop(self):
+        # 1. Check Owner Config
         if hasattr(self.request.user, 'shops') and self.request.user.shops.exists():
             return self.request.user.shops.first()
-        elif hasattr(self.request.user, 'employee_profile'):
+        
+        # 2. Check Employee Config (Direct FK)
+        if getattr(self.request.user, 'shop', None):
+             return self.request.user.shop
+             
+        # 3. Fallback (Legacy)
+        if hasattr(self.request.user, 'employee_profile'):
              return self.request.user.employee_profile.shop
+             
         return None
 
 class SaleListView(BaseShopView, ListView):

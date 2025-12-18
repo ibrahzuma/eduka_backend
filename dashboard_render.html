@@ -207,7 +207,7 @@
                 
                 <li class="nav-item mt-4">
                     <form id="logout-form" action="/accounts/logout/" method="post" style="display: none;">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="9vJlOraHfrEfLEvAav5nkNCAcKQqs44hglVZBpo8FXbQXNbNQkQvWbzSA8l2wy9o">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="jYeLMxWB28UB7Cp580EDJl9yPeVs0exybwSAVpN3GGKwqHHGbbu9zmWPWTJTyBnR">
                     </form>
                     <a href="#" class="nav-link text-danger"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -710,7 +710,7 @@
                 fetch('/api/notifications/read/', {
                     method: 'POST',
                     headers: {
-                        'X-CSRFToken': '9vJlOraHfrEfLEvAav5nkNCAcKQqs44hglVZBpo8FXbQXNbNQkQvWbzSA8l2wy9o',
+                        'X-CSRFToken': 'jYeLMxWB28UB7Cp580EDJl9yPeVs0exybwSAVpN3GGKwqHHGbbu9zmWPWTJTyBnR',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({})

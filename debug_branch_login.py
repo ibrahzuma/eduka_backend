@@ -71,9 +71,9 @@ def test_dashboard_access():
              if 'Finance' in content:
                  print("Sidebar 'Finance' link found.")
                  if 'data-bs-target="#collapseFinance"' in content:
-                     print("  -> Finance is ACTIVE (Has dropdown toggle).")
+                     print("  -> Finance is ACTIVE (Has dropdown toggle). [SUCCESS: Branch Override Working]")
                  else:
-                     print("  -> Finance is LOCKED (Correct for restricted role).")
+                     print("  -> Finance is LOCKED. [FAIL: Branch Override Not Working]")
              else:
                  print("WARNING: Sidebar 'Finance' link NOT found.")
                  
