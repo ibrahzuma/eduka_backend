@@ -88,22 +88,26 @@ class UserRegistrationForm(forms.ModelForm):
         return user
 
 class EmployeeForm(forms.ModelForm):
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}))
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
     assigned_role = forms.ModelChoiceField(queryset=Role.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}), empty_label="Select Role")
     branch = forms.ModelChoiceField(queryset=Branch.objects.none(), required=False, widget=forms.Select(attrs={'class': 'form-select'}), empty_label="Select Branch")
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'phone', 'assigned_role', 'branch', 'password']
+        fields = ['first_name', 'last_name', 'username', 'email', 'phone', 'assigned_role', 'branch', 'password']
         labels = {
-            'username': 'Employee Name',
+            'first_name': 'First Name',
+            'last_name': 'Last Name',
+            'username': 'Username (for Login)',
             'email': 'Email Address',
             'phone': 'Phone Number',
             'assigned_role': 'Role',
             'branch': 'Branch',
         }
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Full Name'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email (Optional)'}),
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
         }
@@ -124,21 +128,25 @@ class EmployeeForm(forms.ModelForm):
         return user
 
 class EmployeeEditForm(forms.ModelForm):
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}))
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
     password = forms.CharField(required=False, widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'New Password (leave blank to keep current)'}))
     branch = forms.ModelChoiceField(queryset=Branch.objects.none(), required=False, widget=forms.Select(attrs={'class': 'form-select'}), empty_label="Select Branch")
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'phone', 'assigned_role', 'branch', 'password']
+        fields = ['first_name', 'last_name', 'username', 'email', 'phone', 'assigned_role', 'branch', 'password']
         labels = {
-            'username': 'Employee Name',
+            'first_name': 'First Name',
+            'last_name': 'Last Name',
+            'username': 'Username (for Login)',
             'email': 'Email Address',
             'phone': 'Phone Number',
             'assigned_role': 'Role',
             'branch': 'Branch',
         }
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Full Name'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email (Optional)'}),
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
             'assigned_role': forms.Select(attrs={'class': 'form-select'}),

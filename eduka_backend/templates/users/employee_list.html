@@ -32,7 +32,10 @@
                     <tbody>
                         {% for employee in employees %}
                         <tr>
-                            <td>{{ employee.username }}</td>
+                            <td>
+                                <strong>{{ employee.get_full_name|default:employee.username }}</strong><br>
+                                <small class="text-muted">@{{ employee.username }}</small>
+                            </td>
                             <td>
                                 {% if employee.assigned_role %}
                                 <span class="badge bg-info text-dark">{{ employee.assigned_role.name }}</span>
