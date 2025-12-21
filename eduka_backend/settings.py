@@ -208,6 +208,11 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
+# Session Settings
+SESSION_COOKIE_AGE = 1200 # 20 Minutes
+SESSION_SAVE_EVERY_REQUEST = True # Reset timer on activity
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 # CORS Configuration
 # CORS Configuration
 CORS_ALLOW_ALL_ORIGINS = False # restricted for production security
