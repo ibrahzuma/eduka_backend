@@ -22,6 +22,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')), # Allauth routes
     path('customers/', include('customers.urls_frontend')),
     path('reports/', include('reports.urls_frontend')),
+    path('api/reports/', include('reports.urls')),
     path('', include('dashboard.urls_frontend')), # Main Dashboard
     path('settings/', shops_views.ShopSettingsView.as_view(), name='settings'),
 ]

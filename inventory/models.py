@@ -55,6 +55,9 @@ class StockMovement(models.Model):
         SET = 'SET', 'Set'
         SALE = 'SALE', 'Sale'
         PURCHASE = 'PURCHASE', 'Purchase'
+        DISPOSAL = 'DISPOSAL', 'Disposal'
+        DAMAGED = 'DAMAGED', 'Damaged'
+        EXPIRED = 'EXPIRED', 'Expired'
 
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name='movements')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
