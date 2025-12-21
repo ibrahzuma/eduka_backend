@@ -56,7 +56,7 @@ class SalesReportView(ReportDateFilterMixin, BaseShopView, ListView):
     def get_queryset(self):
         shop = self.get_shop()
         if shop:
-            qs = Sale.objects.filter(shop=shop).order_by('-created_at')
+            qs = Sale.objects.filter(shop=shop).select_related('customer').order_by('-created_at')
             start_date, end_date = self.get_date_range()
             if start_date:
                 qs = qs.filter(created_at__date__gte=start_date)
@@ -82,7 +82,7 @@ class PurchasesReportView(ReportDateFilterMixin, BaseShopView, ListView):
     def get_queryset(self):
         shop = self.get_shop()
         if shop:
-            qs = PurchaseOrder.objects.filter(shop=shop).order_by('-created_at')
+            qs = PurchaseOrder.objects.filter(shop=shop).select_related('supplier').order_by('-created_at')
             start_date, end_date = self.get_date_range()
             if start_date:
                 qs = qs.filter(created_at__date__gte=start_date)
@@ -174,7 +174,7 @@ class PricingReportView(ReportDateFilterMixin, BaseShopView, ListView):
         shop = self.get_shop()
         if shop:
             # Pricing is typically current state, but filtering by creation date or update allowed
-            return Product.objects.filter(shop=shop)
+            return Product.objects.filter(shop=shop).select_related('category')
         return Product.objects.none()
 
 class DisposalReportView(ReportDateFilterMixin, BaseShopView, ListView):
@@ -188,7 +188,7 @@ class DisposalReportView(ReportDateFilterMixin, BaseShopView, ListView):
         if shop:
             # Note: Stock model doesn't have created_at usually, referencing updated_at or movement if complex
             # For now, simplistic filtering if available, else ignored for stock snapshot
-            return Stock.objects.filter(branch__shop=shop, quantity=0)
+            return Stock.objects.filter(branch__shop=shop, quantity=0).select_related('product', 'branch')
         return Stock.objects.none()
 
 class CashflowView(ReportDateFilterMixin, BaseShopView, TemplateView):
