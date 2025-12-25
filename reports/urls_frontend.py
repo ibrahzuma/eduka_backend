@@ -1,7 +1,7 @@
 from django.urls import path
 from .views_frontend import (
     SalesReportView, PurchasesReportView, PricingReportView, DisposalReportView,
-    ExpensesReportView, IncomeStatementView, CashflowView
+    ExpensesReportView, IncomeStatementView, CashflowView, ForecastingView
 )
 
 urlpatterns = [
@@ -12,4 +12,5 @@ urlpatterns = [
     path('expenses/', ExpensesReportView.as_view(), name='report_expenses'),
     path('income-statement/', IncomeStatementView.as_view(), name='report_income_statement'),
     path('cashflow/', CashflowView.as_view(), name='report_cashflow'),
+    path('forecasting/', ForecastingView.as_view(), name='report_forecasting'),
 ]

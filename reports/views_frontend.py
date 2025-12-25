@@ -8,6 +8,49 @@ from finance.models import Expense
 from inventory.models import Product, Stock
 import datetime
 from django.utils.dateparse import parse_date
+from inventory.forecasting import SalesForecaster
+
+class ForecastingView(LoginRequiredMixin, TemplateView):
+    template_name = "reports/forecasting.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if getattr(self.request.user, 'shop', None):
+            shop = self.request.user.shop
+        elif hasattr(self.request.user, 'shops') and self.request.user.shops.exists():
+            shop = self.request.user.shops.first()
+        else:
+            shop = None
+
+        if not shop:
+            return context
+
+        forecaster = SalesForecaster()
+        predictions = []
+        
+        # Get all stocks for this shop with positive quantity
+        stocks = Stock.objects.filter(branch__shop=shop, quantity__gt=0).select_related('product', 'branch')
+        
+        for stock in stocks:
+            runout_date, days_left, status = forecaster.predict_runout_date(stock)
+            daily_usage = forecaster.predict_daily_usage(stock.product, shop)
+            
+            if daily_usage > 0: # Only show items with usage
+                predictions.append({
+                    'product': stock.product.name,
+                    'branch': stock.branch.name,
+                    'current_stock': stock.quantity,
+                    'daily_usage': round(daily_usage, 2),
+                    'days_left': days_left,
+                    'runout_date': runout_date,
+                    'status': status
+                })
+        
+        # Sort by urgency (days left)
+        predictions.sort(key=lambda x: x['days_left'])
+        
+        context['predictions'] = predictions
+        return context
 
 class BaseShopView(LoginRequiredMixin):
     def get_shop(self):
