@@ -40,8 +40,8 @@ class ShopSubscription(models.Model):
         ('DAILY', 'Daily'),
         ('WEEKLY', 'Weekly'),
         ('MONTHLY', 'Monthly'),
-        ('QUARTERLY', 'Quarterly'),
-        ('BIANNUALLY', 'Biannually'),
+        ('QUARTERLY', '3 Months'),
+        ('BIANNUALLY', '6 Months'),
         ('YEARLY', 'Yearly'),
     ]
 

@@ -33,7 +33,18 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
     def get_display_price(self, obj):
         # Formatted string e.g. "1,000 / Day"
         price = self.get_price_display(obj)
-        cycle_label = self.get_cycle(obj).title()
+        cycle = self.get_cycle(obj)
+        
+        cycle_labels = {
+            'daily': 'Day',
+            'weekly': 'Week',
+            'monthly': 'Month',
+            'quarterly': '3 Months',
+            'biannually': '6 Months',
+            'yearly': 'Year'
+        }
+        
+        cycle_label = cycle_labels.get(cycle, cycle.title())
         return f"{price:,.0f} / {cycle_label}"
 
 class SubscriptionPlanListView(views.APIView):
