@@ -34,6 +34,33 @@ class ReportBaseView(views.APIView):
         
         return start_date, end_date
 
+    def get_summary_stats(self, queryset, date_field='created_at', sum_field='total_amount', date_transform=True):
+        today = timezone.now().date()
+        periods = {
+            'today': today,
+            'week': today - datetime.timedelta(days=7),
+            'month': today - datetime.timedelta(days=30),
+            'year': today - datetime.timedelta(days=365)
+        }
+        
+        data = {}
+        lookup_suffix = "__date__gte" if date_transform else "__gte"
+        for key, start_date in periods.items():
+            filter_kwargs = {f"{date_field}{lookup_suffix}": start_date}
+            qs = queryset.filter(**filter_kwargs)
+            
+            if sum_field:
+                total = qs.aggregate(Sum(sum_field))[f'{sum_field}__sum'] or 0
+            else:
+                total = 0 # or count?
+                
+            count = qs.count()
+            data[key] = {
+                'total': total,
+                'count': count
+            }
+        return data
+
 class SalesReportAPIView(ReportBaseView):
     def get(self, request):
         shop = self.get_shop()
@@ -64,27 +91,8 @@ class SalesSummaryAPIView(ReportBaseView):
         if not shop:
             return response.Response({'error': 'No shop associated'}, status=400)
             
-        today = timezone.now().date()
-        
-        periods = {
-            'today': today,
-            'week': today - datetime.timedelta(days=7),
-            'month': today - datetime.timedelta(days=30),
-            'year': today - datetime.timedelta(days=365)
-        }
-        
-        data = {}
         base_qs = Sale.objects.filter(shop=shop)
-        
-        for key, start_date in periods.items():
-            qs = base_qs.filter(created_at__date__gte=start_date)
-            total = qs.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
-            count = qs.count()
-            data[key] = {
-                'total_sales': total,
-                'count': count
-            }
-            
+        data = self.get_summary_stats(base_qs, date_field='created_at', sum_field='total_amount')
         return response.Response(data)
 
 class PurchasesReportAPIView(ReportBaseView):
@@ -229,3 +237,95 @@ class CashflowAPIView(ReportBaseView):
             'outflow': outflow,
             'net_cashflow': inflow - outflow
         })
+
+# New Summary Views
+class PurchasesSummaryAPIView(ReportBaseView):
+    def get(self, request):
+        shop = self.get_shop()
+        if not shop: return response.Response({'error': 'No shop associated'}, status=400)
+        qs = PurchaseOrder.objects.filter(shop=shop)
+        data = self.get_summary_stats(qs, date_field='created_at', sum_field='total_cost')
+        return response.Response(data)
+
+class ExpensesSummaryAPIView(ReportBaseView):
+    def get(self, request):
+        shop = self.get_shop()
+        if not shop: return response.Response({'error': 'No shop associated'}, status=400)
+        qs = Expense.objects.filter(shop=shop)
+        # Expense uses 'date' (DateField), so no __date transform needed
+        data = self.get_summary_stats(qs, date_field='date', sum_field='amount', date_transform=False)
+        return response.Response(data)
+
+class DisposalSummaryAPIView(ReportBaseView):
+    def get(self, request):
+        shop = self.get_shop()
+        if not shop: return response.Response({'error': 'No shop associated'}, status=400)
+        # Disposal is StockMovement with type DISPOSAL or DAMAGED or EXPIRED
+        qs = StockMovement.objects.filter(
+            branch__shop=shop, 
+            movement_type__in=['DISPOSAL', 'DAMAGED', 'EXPIRED']
+        )
+        # We need value. StockMovement doesn't have value field.
+        # We need to annotate value = quantity_change (abs) * product__cost_price
+        # Note: quantity_change is negative for reductions.
+        from django.db.models import F
+        from django.db.models.functions import Abs
+        qs = qs.annotate(
+            val=Abs(F('quantity_change')) * F('product__cost_price')
+        )
+        # StockMovement has created_at (DateTime)
+        data = self.get_summary_stats(qs, date_field='created_at', sum_field='val')
+        return response.Response(data)
+
+class PricingSummaryAPIView(ReportBaseView):
+    def get(self, request):
+        shop = self.get_shop()
+        if not shop: return response.Response({'error': 'No shop associated'}, status=400)
+        # Product has created_at (DateTime)
+        qs = Product.objects.filter(shop=shop)
+        data = self.get_summary_stats(qs, date_field='created_at', sum_field='selling_price')
+        return response.Response(data)
+
+class IncomeSummaryAPIView(ReportBaseView):
+    def get(self, request):
+        shop = self.get_shop()
+        if not shop: return response.Response({'error': 'No shop associated'}, status=400)
+        
+        # Income = Sales - Purchases - Expenses
+        sales_data = self.get_summary_stats(Sale.objects.filter(shop=shop), 'created_at', 'total_amount')
+        purchases_data = self.get_summary_stats(PurchaseOrder.objects.filter(shop=shop), 'created_at', 'total_cost')
+        # Expenses need date_transform=False
+        expenses_data = self.get_summary_stats(Expense.objects.filter(shop=shop), 'date', 'amount', date_transform=False)
+        
+        income_data = {}
+        for key in ['today', 'week', 'month', 'year']:
+            s = sales_data[key]['total']
+            p = purchases_data[key]['total']
+            e = expenses_data[key]['total']
+            income_data[key] = {
+                'total': s - p - e, # Net Profit
+                'sales': s,
+                'cogs': p,
+                'expenses': e
+            }
+        return response.Response(income_data)
+
+class CashflowSummaryAPIView(ReportBaseView):
+    def get(self, request):
+        shop = self.get_shop()
+        if not shop: return response.Response({'error': 'No shop associated'}, status=400)
+        
+        sales_data = self.get_summary_stats(Sale.objects.filter(shop=shop), 'created_at', 'total_amount')
+        purchases_data = self.get_summary_stats(PurchaseOrder.objects.filter(shop=shop), 'created_at', 'total_cost')
+        expenses_data = self.get_summary_stats(Expense.objects.filter(shop=shop), 'date', 'amount', date_transform=False)
+        
+        cashflow_data = {}
+        for key in ['today', 'week', 'month', 'year']:
+            inflow = sales_data[key]['total']
+            outflow = purchases_data[key]['total'] + expenses_data[key]['total']
+            cashflow_data[key] = {
+                'net_cashflow': inflow - outflow,
+                'inflow': inflow,
+                'outflow': outflow
+            }
+        return response.Response(cashflow_data)
