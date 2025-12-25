@@ -111,6 +111,25 @@ class DashboardTemplateView(LoginRequiredMixin, TemplateView):
             # Branches Count (Single Shop)
             if shops.exists():
                 context['total_branches'] = shops.first().branches.count()
+                
+            # Top Cashier Logic
+            try:
+                from django.db.models import Sum
+                # Filter sales for period (using 'sales_period' logic implicitly via sales & start_date)
+                period_sales = sales.filter(created_at__date__gte=start_date)
+                top_cashier_data = period_sales.values('cashier__username', 'cashier__first_name', 'cashier__last_name').annotate(
+                    total=Sum('total_amount')
+                ).order_by('-total').first()
+                
+                if top_cashier_data:
+                    name = f"{top_cashier_data['cashier__first_name']} {top_cashier_data['cashier__last_name']}".strip()
+                    context['top_cashier'] = {
+                        'name': name if name else top_cashier_data['cashier__username'],
+                        'amount': top_cashier_data['total']
+                    }
+            except Exception as e:
+                print(f"Error calculating top cashier: {e}")
+                pass
         
         # Get Subscription Status (Safe Mode)
         context['days_left'] = 0 # Default to 0 (expired/immediate action)

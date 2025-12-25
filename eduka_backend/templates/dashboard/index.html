@@ -236,8 +236,25 @@
             </div>
         </div>
     </div>
-    <!-- Branches Card -->
+    <!-- Top Cashier or Branches Card -->
     <div class="col-md-4 mb-3">
+        {% if top_cashier %}
+        <div class="card stat-card h-100 p-3">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label mb-1">Top Performer</div>
+                    <div class="stat-value text-success text-truncate" style="font-size: 1.4rem; max-width: 150px;"
+                        title="{{ top_cashier.name }}">{{ top_cashier.name }}</div>
+                    <div class="small text-muted mt-2">
+                        <i class="bi bi-trophy-fill text-warning"></i> Sales: {{ top_cashier.amount|intcomma }}
+                    </div>
+                </div>
+                <div class="icon-box icon-box-green rounded-circle" style="width: 60px; height: 60px;">
+                    <i class="bi bi-award"></i>
+                </div>
+            </div>
+        </div>
+        {% else %}
         <a href="{% url 'branch_list' %}" class="text-decoration-none">
             <div class="card stat-card h-100 p-3">
                 <div class="card-body d-flex justify-content-between align-items-center">
@@ -254,6 +271,7 @@
                 </div>
             </div>
         </a>
+        {% endif %}
     </div>
 </div>
 

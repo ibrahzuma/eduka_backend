@@ -15,6 +15,7 @@ class CustomUser(AbstractUser):
     # Employee Fields
     shop = models.ForeignKey('shops.Shop', on_delete=models.SET_NULL, null=True, blank=True, related_name='employees')
     branch = models.ForeignKey('shops.Branch', on_delete=models.SET_NULL, null=True, blank=True, related_name='employees')
+    commission_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, help_text="Commission percentage (e.g. 5.00 for 5%)")
     
     def save(self, *args, **kwargs):
         if self.is_superuser:

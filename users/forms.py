@@ -106,6 +106,7 @@ class EmployeeForm(forms.ModelForm):
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email (Optional)'}),
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
+            'commission_rate': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00', 'step': '0.01'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -129,19 +130,21 @@ class EmployeeEditForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'phone', 'assigned_role', 'branch']
+        fields = ['username', 'email', 'phone', 'assigned_role', 'branch', 'commission_rate']
         labels = {
             'username': 'Username (for Login)',
             'email': 'Email Address',
             'phone': 'Phone Number',
             'assigned_role': 'Role',
             'branch': 'Branch',
+            'commission_rate': 'Commission Rate (%)',
         }
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email (Optional)'}),
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
             'assigned_role': forms.Select(attrs={'class': 'form-select'}),
+            'commission_rate': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00', 'step': '0.01'}),
         }
 
     def __init__(self, *args, **kwargs):

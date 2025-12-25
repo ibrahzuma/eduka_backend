@@ -540,6 +540,8 @@
                                 href="{% url 'report_cashflow' %}">Cashflow</a>
                             <a class="collapse-item {% if request.resolver_match.url_name == 'report_forecasting' %}active{% endif %}"
                                 href="{% url 'report_forecasting' %}">Sales Forecasting</a>
+                            <a class="collapse-item {% if request.resolver_match.url_name == 'report_staff_performance' %}active{% endif %}"
+                                href="{% url 'report_staff_performance' %}">Staff Performance</a>
                         </div>
                     </div>
                     {% endif %}

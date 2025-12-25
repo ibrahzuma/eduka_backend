@@ -265,3 +265,46 @@ class CashflowView(ReportDateFilterMixin, BaseShopView, TemplateView):
             context['outflow'] = total_purchases + total_expenses
             context['net_cashflow'] = context['inflow'] - context['outflow']
         return context
+
+class StaffPerformanceView(ReportDateFilterMixin, BaseShopView, ListView):
+    template_name = 'reports/staff_performance.html'
+    context_object_name = 'performances'
+    model = Sale # Dummy, we override get_queryset
+
+    def get_queryset(self):
+        shop = self.get_shop()
+        if not shop: return []
+        
+        start_date, end_date = self.get_date_range()
+        
+        # Filter Sales
+        sales_qs = Sale.objects.filter(shop=shop).select_related('cashier')
+        if start_date:
+            sales_qs = sales_qs.filter(created_at__date__gte=start_date)
+        if end_date:
+            sales_qs = sales_qs.filter(created_at__date__lte=end_date)
+            
+        from django.db.models import Sum, Count
+        
+        # Group by cashier
+        # Note: 'cashier' is a FK to User. We want to group by User and get their commission rate.
+        performance = sales_qs.values('cashier__username', 'cashier__first_name', 'cashier__last_name', 'cashier__commission_rate').annotate(
+            total_sales=Sum('total_amount'),
+            transaction_count=Count('id')
+        ).order_by('-total_sales')
+        
+        results = []
+        for p in performance:
+            rate = p['cashier__commission_rate'] or 0
+            total = p['total_sales'] or 0
+            commission = total * (rate / 100)
+            
+            results.append({
+                'name': f"{p['cashier__first_name']} {p['cashier__last_name']}".strip() or p['cashier__username'] or 'Unknown',
+                'total_sales': total,
+                'transactions': p['transaction_count'],
+                'commission_rate': rate,
+                'commission_earned': commission
+            })
+            
+        return results
