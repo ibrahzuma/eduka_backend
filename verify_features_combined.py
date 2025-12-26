@@ -68,6 +68,46 @@ def verify_all():
     else:
         print(f"FAILURE: Dashboard load failed ({resp_dash.status_code})")
 
+    # --- 1.5.1 Edge Case: User with No Shop ---
+    print("\n--- 1.5.1 Edge Case: User with No Shop ---")
+    user_no_shop = User.objects.create_user(username='noshop_user', password='password123')
+    client.force_login(user_no_shop)
+    resp = client.get(reverse('dashboard'))
+    if resp.status_code == 200:
+        print("SUCCESS: Dashboard loaded for user with no shop.")
+    else:
+        print(f"FAILURE: Dashboard crash for user with no shop ({resp.status_code})")
+
+    # --- 1.5.2 Edge Case: User with Shop but NO SLUG ---
+    print("\n--- 1.5.2 Edge Case: Shop with No Slug ---")
+    user_slugless = User.objects.create_user(username='slugless', password='password123')
+    Shop.objects.create(owner=user_slugless, name="Slugless Shop", slug=None)
+    client.force_login(user_slugless)
+    try:
+        resp = client.get(reverse('dashboard'))
+        if resp.status_code == 200:
+            print("SUCCESS: Dashboard loaded for shop with no slug.")
+        else:
+            print(f"FAILURE: Dashboard crash for shop with no slug ({resp.status_code})")
+    except Exception as e:
+        print(f"CRITICAL FAILURE: {e}")
+
+    # --- 1.5.3 Edge Case: Employee User ---
+    print("\n--- 1.5.3 Edge Case: Employee User ---")
+    user_emp = User.objects.create_user(username='employee_user', password='password123', role='EMPLOYEE')
+    # Assign to the first shop
+    user_emp.shop = shop
+    user_emp.save()
+    client.force_login(user_emp)
+    resp = client.get(reverse('dashboard'))
+    if resp.status_code == 200:
+        print("SUCCESS: Dashboard loaded for employee.")
+    else:
+        print(f"FAILURE: Dashboard crash for employee ({resp.status_code})")
+
+    # Restore main user
+    client.force_login(user)
+
     # 2. Verify Expense Scanning (Mock OCR)
     print("\n--- 2. Expense Scanning (Mock OCR) ---")
     # We use a mock file
