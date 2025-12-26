@@ -387,7 +387,6 @@
                                 href="{% url 'abc_analysis' %}">ABC Analysis</a>
                             <a class="collapse-item {% if request.resolver_match.url_name == 'profitability_report' %}active{% endif %}"
                                 href="{% url 'profitability_report' %}">Profitability Report</a>
-                            <a class="collapse-item" href="/admin/inventory/happyhour/">Happy Hours Policy</a>
                         </div>
                     </div>
                     {% endif %}
@@ -625,6 +624,15 @@
                     <a href="{% url 'shop_pricing' %}"
                         class="nav-link {% if request.resolver_match.url_name == 'shop_pricing' %}active{% endif %}">
                         <i class="bi bi-credit-card me-2"></i> Subscription
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if user.role != 'EMPLOYEE' and user.shops.exists %}
+                <li class="nav-item">
+                    <a href="{% url 'public_store' slug=user.shops.first.slug default='setup' %}" target="_blank"
+                        class="nav-link">
+                        <i class="bi bi-shop-window me-2"></i> Visit Public Store
                     </a>
                 </li>
                 {% endif %}

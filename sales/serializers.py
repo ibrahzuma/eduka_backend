@@ -20,17 +20,11 @@ class SaleSerializer(serializers.ModelSerializer):
         read_only_fields = ('cashier', 'created_at')
 
     def create(self, validated_data):
-        from .utils_pricing import calculate_price
         items_data = validated_data.pop('items')
         sale = Sale.objects.create(**validated_data)
         total = 0
         for item_data in items_data:
-            product = item_data.get('product') # Assuming this is a Product instance due to ModelSerializer
-            
-            # Recalculate price server-side
-            if product:
-                final_price, _, _ = calculate_price(product, sale.shop)
-                item_data['price'] = final_price
+            # product = item_data.get('product')
             
             total += item_data['price'] * item_data['quantity']
             SaleItem.objects.create(sale=sale, **item_data)
