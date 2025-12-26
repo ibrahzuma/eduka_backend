@@ -16,7 +16,6 @@ pip install -r requirements.txt
 
 # 3. Database Migrations
 echo "[3/5] Applying migrations..."
-python manage.py makemigrations
 python manage.py migrate
 
 # 4. Static Files
