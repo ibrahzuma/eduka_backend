@@ -132,7 +132,6 @@
         <div class="hero-card shadow text-white">
             <div class="row align-items-center position-relative" style="z-index: 1;">
                 <div class="col-md-8">
-                    <!-- Removed '|default' filter to fix TemplateSyntaxError -->
                     <h2 class="fw-bold mb-1">Good {% now "A"|lower|yesno:"Morning,Afternoon,Evening" %}, {{
                         user.first_name }}!</h2>
                     <p class="opacity-75 mb-0">Here's what's happening with your business today.</p>
@@ -204,7 +203,6 @@
                         }}</h4>
                     {% else %}
                     <h6 class="text-secondary text-uppercase small fw-bold mb-1">Active Branches</h6>
-                    <!-- Removed default filter -->
                     <h3 class="fw-bold text-dark mb-0">{{ total_branches }}</h3>
                     {% endif %}
                 </div>
@@ -233,7 +231,6 @@
             <div class="d-flex align-items-start justify-content-between mb-3">
                 <div>
                     <h6 class="text-secondary text-uppercase small fw-bold mb-1">Low Stock Alerts</h6>
-                    <!-- Removed default filter -->
                     <h3 class="fw-bold text-dark mb-0">{{ low_stock_items }}</h3>
                 </div>
                 <div class="icon-box-modern bg-icon-success">
@@ -364,9 +361,7 @@
         // Mock Data simulation based on stats
         // In a real scenario, you'd pass JSON data from the view using {{ chart_data|safe }}
         const activeLabel = "{{ period_label }}";
-        // Removed default filter
         const salesData = [12000, 19000, 3000, 5000, 20000, 30000, {{ sales_period }}]; // Mock trend
-    // Removed default filter
     const expenseData = [5000, 10000, 2000, 1000, 15000, 10000, {{ purchases_period }}];
 
     // Gradient
