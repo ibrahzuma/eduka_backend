@@ -628,13 +628,7 @@
                 </li>
                 {% endif %}
 
-                {% if user.role != 'EMPLOYEE' and user.shops.exists and user.shops.first.slug %}
-                <li class="nav-item">
-                    <a href="{% url 'public_store' slug=user.shops.first.slug %}" target="_blank" class="nav-link">
-                        <i class="bi bi-shop-window me-2"></i> Visit Public Store
-                    </a>
-                </li>
-                {% endif %}
+
 
                 {% if user.role != 'EMPLOYEE' %}
                 <li class="nav-item">
