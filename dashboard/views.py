@@ -146,12 +146,19 @@ class DashboardTemplateView(LoginRequiredMixin, TemplateView):
                 context['subscription_status'] = sub.status
                 
                 if sub.end_date:
-                    days_left = (sub.end_date - timezone.now()).days
-                    if days_left <= 0:
-                        context['days_left'] = 0
-                        context['subscription_status'] = 'EXPIRED'
+                    delta = sub.end_date - timezone.now()
+                    days_left = delta.days
+                    
+                    # If subscription is technically active but less than 24h remain, days_left is 0.
+                    # This should NOT be considered expired if end_date is in the future.
+                    if sub.end_date <= timezone.now():
+                         context['days_left'] = 0
+                         context['subscription_status'] = 'EXPIRED'
                     else:
-                        context['days_left'] = days_left
+                         context['days_left'] = max(0, days_left)
+                         # Do NOT override status if it's already ACTIVE/TRIAL
+                         if context['subscription_status'] not in ['ACTIVE', 'TRIAL']:
+                             context['subscription_status'] = 'EXPIRED'
                 else:
                     context['days_left'] = 0
             except Exception:
