@@ -77,19 +77,29 @@ class RoleListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        # Return generic roles or filtered? 
-        # For now, return all roles as they seem global definition based on model. 
-        # If roles are shop-specific, we'd filter. 
-        # Looking at Role model, it doesn't have a 'shop' FK. So roles are global system-wide definitions?
-        # Let's check model again. 
-        # Model: name, description, permissions. No shop FK. 
-        # So they are global.
-        return Role.objects.all()
+        user = self.request.user
+        if hasattr(user, 'shops') and user.shops.exists():
+            return Role.objects.filter(shop=user.shops.first())
+        return Role.objects.none()
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        if hasattr(user, 'shops') and user.shops.exists():
+            serializer.save(shop=user.shops.first())
+        else:
+            # Handle case where user has no shop? 
+            # For now, save without shop (or maybe raise error).
+            serializer.save()
 
 class RoleDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Role.objects.all()
     serializer_class = RoleSerializer
-    permission_classes = [permissions.IsAdminUser] # Only admins can modify roles defs?
+    permission_classes = [permissions.IsAuthenticated] # Changed from Admin to Authenticated (Owner)
+
+    def get_queryset(self):
+        user = self.request.user
+        if hasattr(user, 'shops') and user.shops.exists():
+            return Role.objects.filter(shop=user.shops.first())
+        return Role.objects.none()
 
 class EmployeeListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = EmployeeSerializer
