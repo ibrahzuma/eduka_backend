@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from shops import views_frontend as shops_views
+from shops import views_public as public_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +26,5 @@ urlpatterns = [
     path('api/reports/', include('reports.urls')),
     path('', include('dashboard.urls_frontend')), # Main Dashboard
     path('settings/', shops_views.ShopSettingsView.as_view(), name='settings'),
+    path('store/<slug:slug>/', public_views.PublicShopView.as_view(), name='public_store'),
 ]

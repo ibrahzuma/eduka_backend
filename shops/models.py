@@ -10,6 +10,8 @@ class Shop(models.Model):
     phone = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     logo = models.ImageField(upload_to='shops/logos/', null=True, blank=True)
+    slug = models.SlugField(max_length=255, unique=True, null=True, blank=True)
+    public_visibility = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

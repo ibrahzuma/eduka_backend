@@ -91,11 +91,16 @@ class SaleCreateView(BaseShopView, CreateView):
                         
                         if product_id and quantity > 0:
                             product = Product.objects.get(id=product_id)
+                            
+                            # Apply Time-Based Pricing
+                            from .utils_pricing import calculate_price
+                            final_price, _, _ = calculate_price(product, shop)
+                            
                             SaleItem.objects.create(
                                 sale=self.object,
                                 product=product,
                                 quantity=quantity,
-                                price=price
+                                price=final_price # Use calculated price
                             )
                             
                             # SYNC: Deduct Stock

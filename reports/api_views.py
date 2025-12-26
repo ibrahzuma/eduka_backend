@@ -139,6 +139,31 @@ class ExpensesReportAPIView(ReportBaseView):
             'expenses': serializer.data
         })
 
+    def post(self, request):
+        shop = self.get_shop()
+        if not shop:
+            return response.Response({'error': 'No shop associated'}, status=400)
+            
+        serializer = ReportExpenseSerializer(data=request.data)
+        if serializer.is_valid():
+            # Determine Branch
+            branch = None
+            if getattr(request.user, 'branch', None):
+                 branch = request.user.branch
+            elif hasattr(request.user, 'employee_profile') and request.user.employee_profile.branch:
+                 branch = request.user.employee_profile.branch
+            else:
+                 # Default to Main Branch for Owner
+                 if hasattr(shop, 'branches'):
+                     branch = shop.branches.filter(is_main=True).first()
+            
+            if not branch:
+                 return response.Response({'error': 'No active branch found for expense.'}, status=400)
+
+            serializer.save(shop=shop, branch=branch)
+            return response.Response(serializer.data, status=201)
+        return response.Response(serializer.errors, status=400)
+
 class PricingReportAPIView(ReportBaseView):
     def get(self, request):
         shop = self.get_shop()
