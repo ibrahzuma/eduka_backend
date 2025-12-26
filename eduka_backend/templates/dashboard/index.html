@@ -132,8 +132,7 @@
         <div class="hero-card shadow text-white">
             <div class="row align-items-center position-relative" style="z-index: 1;">
                 <div class="col-md-8">
-                    <h2 class="fw-bold mb-1">Good {% now "A"|lower|yesno:"Morning,Afternoon,Evening" %}, {{
-                        user.first_name }}!</h2>
+                    <h2 class="fw-bold mb-1">Hello, {{ user.first_name|default:user.username|title }}!</h2>
                     <p class="opacity-75 mb-0">Here's what's happening with your business today.</p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
