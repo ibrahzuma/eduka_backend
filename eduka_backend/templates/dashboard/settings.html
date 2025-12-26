@@ -103,33 +103,35 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-4">
-                            <label class="text-muted small fw-bold text-uppercase d-block">Pricing Plan</label>
-                            <span class="fs-5 fw-bold text-dark">{{ shop.settings.get_plan_display|default:"Trial"
-                                }}</span>
+                            <small class="text-muted text-uppercase fw-bold">Pricing Plan</small>
+                            <h4 class="font-weight-bold text-dark mt-1">
+                                {{ settings_obj.get_plan_display|default:"Trial" }}
+                            </h4>
                         </div>
 
-                        {% if shop.settings.plan == 'TRIAL' %}
                         <div class="mb-4">
-                            <label class="text-muted small fw-bold text-uppercase d-block">Trial days left</label>
-                            <!-- Simple calculation logic for display, assuming backend logic handles trial expiry -->
-                            <span class="badge bg-warning text-dark fs-6 px-3 py-2 rounded-pill">
-                                {{ shop.settings.trial_ends_at|timeuntil|default:"0 days" }}
-                            </span>
-                        </div>
-                        {% endif %}
-
-                        <div class="mb-4">
-                            <label class="text-muted small fw-bold text-uppercase d-block">Next billing date</label>
-                            <div class="d-flex align-items-center">
-                                <span class="fs-6 text-dark me-2">
-                                    {{ shop.settings.next_billing_date|date:"d, M Y"|default:"-" }}
-                                </span>
-                                {% if shop.settings.billing_amount > 0 %}
-                                <span class="text-muted small">
-                                    ( {{ shop.settings.currency }} {{ shop.settings.billing_amount|intcomma }} )
-                                </span>
+                            <small class="text-muted text-uppercase fw-bold">Trial days left</small>
+                            <h4 class="font-weight-bold text-dark mt-1">
+                                {# logic for trial days #}
+                                {% if settings_obj.plan == 'TRIAL' and settings_obj.trial_ends_at %}
+                                {{ settings_obj.trial_ends_at|timeuntil }}
+                                {% else %}
+                                -
                                 {% endif %}
-                            </div>
+                            </h4>
+                        </div>
+
+                        <div class="mb-3">
+                            <small class="text-muted text-uppercase fw-bold">Next billing date</small>
+                            <p class="h5 mt-1 text-gray-800">
+                                {{ settings_obj.next_billing_date|date:"d, M Y"|default:"-" }}
+                                {% if settings_obj.billing_amount > 0 %}
+                                <span class="text-muted fs-6">( {{ settings_obj.currency }} {{
+                                    settings_obj.billing_amount|intcomma }} )</span>
+                                {% endif %}
+                            </p>
+                            <a href="{% url 'shop_pricing' %}" class="btn btn-outline-primary btn-sm mt-2 w-100">Manage
+                                Subscription</a>
                         </div>
 
                         <div class="d-grid">

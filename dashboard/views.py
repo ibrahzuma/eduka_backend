@@ -619,7 +619,12 @@ class SettingsView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if hasattr(self.request.user, 'shops') and self.request.user.shops.exists():
-             context['shop'] = self.request.user.shops.first()
+             shop = self.request.user.shops.first()
+             context['shop'] = shop
+             # Pass Settings Explicitly
+             from shops.models import ShopSettings
+             settings_obj, _ = ShopSettings.objects.get_or_create(shop=shop)
+             context['settings_obj'] = settings_obj
         return context
 
     def post(self, request, *args, **kwargs):
