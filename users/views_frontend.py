@@ -53,7 +53,13 @@ from django.contrib import messages
 
 class RoleListView(LoginRequiredMixin, View):
     def get(self, request):
-        shop = request.user.shops.first()
+        if hasattr(request.user, 'shops') and request.user.shops.exists():
+            shop = request.user.shops.first()
+        elif hasattr(request.user, 'shop') and request.user.shop:
+            shop = request.user.shop
+        else:
+            shop = None
+            
         roles = Role.objects.filter(shop=shop).order_by('-created_at') if shop else Role.objects.none()
         form = RoleForm()
         return render(request, 'users/role_list.html', {'roles': roles, 'form': form})
@@ -83,8 +89,17 @@ class RoleCreateView(LoginRequiredMixin, View):
 
     def post(self, request):
         form = RoleForm(request.POST)
+        
+        # Determine Shop (Owner or Employee)
+        shop = None
+        if hasattr(request.user, 'shops') and request.user.shops.exists():
+            shop = request.user.shops.first()
+        elif hasattr(request.user, 'shop') and request.user.shop:
+            shop = request.user.shop
+            
         if form.is_valid():
             role = form.save(commit=False)
+            role.shop = shop # Assign the shop!
             
             # Process Permissions
             permissions = {}
