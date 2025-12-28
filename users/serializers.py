@@ -38,9 +38,12 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
     def get_shop_name(self, obj):
-        # Assuming Owner -> Shop relationship
+        # Owner -> Shop relationship
         if hasattr(obj, 'shops') and obj.shops.exists():
             return [shop.name for shop in obj.shops.all()]
+        # Employee -> Shop relationship
+        if hasattr(obj, 'shop') and obj.shop:
+             return [obj.shop.name]
         return []
 
     def get_formatted_date(self, obj):

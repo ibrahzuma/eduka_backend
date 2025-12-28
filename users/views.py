@@ -29,7 +29,7 @@ class UserManagementAPIView(APIView):
         if not request.user.is_superuser:
             return Response({'error': 'Unauthorized'}, status=status.HTTP_403_FORBIDDEN)
         
-        users = CustomUser.objects.all().order_by('-date_joined')
+        users = CustomUser.objects.all().order_by('-date_joined').select_related('shop').prefetch_related('shops')
         
         # Search
         q = request.GET.get('q')
@@ -122,8 +122,20 @@ class RoleDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         user = self.request.user
+        if not user.is_authenticated:
+            return Role.objects.none()
+            
+        if user.is_superuser:
+            return Role.objects.all()
+
+        # Owner
         if hasattr(user, 'shops') and user.shops.exists():
             return Role.objects.filter(shop=user.shops.first())
+            
+        # Employee
+        if hasattr(user, 'shop') and user.shop:
+            return Role.objects.filter(shop=user.shop)
+            
         return Role.objects.none()
 
 class EmployeeListCreateAPIView(generics.ListCreateAPIView):

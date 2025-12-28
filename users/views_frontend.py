@@ -1,7 +1,15 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.contrib.auth import login
-from .forms import UserRegistrationForm
+from django.contrib.auth import login, logout, get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from shops.models import Shop, Branch, ShopSettings
+from .models import Role
+from .forms import (
+    UserRegistrationForm, RoleForm, EmployeeForm, EmployeeEditForm, ProfileForm
+)
+
+User = get_user_model()
 
 class RegisterView(View):
     def get(self, request):
@@ -23,7 +31,7 @@ class RegisterView(View):
             street = form.cleaned_data.get('street')
             
             # Create Shop automatically
-            from shops.models import Shop, Branch, ShopSettings
+            # Create Shop automatically
             shop = Shop.objects.create(owner=user, name=business_name)
             ShopSettings.objects.create(shop=shop)
             
@@ -41,15 +49,10 @@ class RegisterView(View):
 
 def custom_logout_view(request):
     if request.method == 'POST':
-        from django.contrib.auth import logout
         logout(request)
         return redirect('login')
     return render(request, 'auth/logout.html')
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Role
-from .forms import RoleForm
-from django.contrib import messages
 
 class RoleListView(LoginRequiredMixin, View):
     def get(self, request):
@@ -173,12 +176,6 @@ class RoleUpdateView(LoginRequiredMixin, View):
         ]
         return render(request, 'users/role_edit.html', {'form': form, 'role': role, 'modules': modules})
 
-from .forms import EmployeeForm
-from django.contrib.auth import get_user_model
-User = get_user_model()
-
-from django.shortcuts import get_object_or_404
-from .forms import EmployeeForm, EmployeeEditForm
 
 class EmployeeListView(LoginRequiredMixin, View):
     def get(self, request):
@@ -245,7 +242,6 @@ class EmployeeDeleteView(LoginRequiredMixin, View):
         messages.error(request, 'Employee has been permanently deleted.')
         return redirect('employee_list')
 
-from .forms import ProfileForm
 
 class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
