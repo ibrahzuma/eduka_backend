@@ -8,5 +8,5 @@ router.register(r'products', ProductViewSet, basename='product')
 router.register(r'stocks', StockViewSet, basename='stock')
 
 urlpatterns = [
-    # path('', include(router.urls)),
+    path('', include(router.urls)),
 ]

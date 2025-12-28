@@ -9,5 +9,5 @@ router.register(r'expenses', ExpenseViewSet, basename='expense')
 
 urlpatterns = [
     path('analyze-receipt/', views_ocr.analyze_receipt, name='analyze_receipt'),
-    # path('', include(router.urls)),
+    path('', include(router.urls)),
 ]
