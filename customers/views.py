@@ -8,6 +8,31 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        if not user.is_authenticated:
+            return Customer.objects.none()
+            
         if getattr(user, 'role', None) == 'SUPER_ADMIN' or user.is_superuser:
             return Customer.objects.all()
-        return Customer.objects.filter(shop__owner=user)
+            
+        # Determine Shop
+        if hasattr(user, 'shops') and user.shops.exists():
+            return Customer.objects.filter(shop=user.shops.first())
+        elif hasattr(user, 'shop') and user.shop:
+            return Customer.objects.filter(shop=user.shop)
+            
+        return Customer.objects.none()
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        shop = None
+        
+        if hasattr(user, 'shops') and user.shops.exists():
+            shop = user.shops.first()
+        elif hasattr(user, 'shop') and user.shop:
+            shop = user.shop
+            
+        if not shop:
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError({"shop": "No shop associated with this user."})
+            
+        serializer.save(shop=shop)
