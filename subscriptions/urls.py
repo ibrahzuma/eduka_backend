@@ -7,5 +7,4 @@ urlpatterns = [
     path('check-status/<int:payment_id>/', views.CheckPaymentStatusView.as_view(), name='check_payment_status'),
     path('plans/', api_views.SubscriptionPlanListView.as_view(), name='api_sub_plans'),
     path('status/', api_views.SubscriptionStatusAPIView.as_view(), name='api_sub_status'),
-    path('payments/initiate/', api_views.SubscriptionPaymentView.as_view(), name='api_sub_pay_init'),
 ]
