@@ -85,18 +85,36 @@ class RoleListCreateAPIView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
+        if not user.is_authenticated:
+             return Role.objects.none()
+             
+        if user.is_superuser:
+             return Role.objects.all()
+        
+        # Owner
         if hasattr(user, 'shops') and user.shops.exists():
             return Role.objects.filter(shop=user.shops.first())
+            
+        # Employee
+        if hasattr(user, 'shop') and user.shop:
+            return Role.objects.filter(shop=user.shop)
+            
         return Role.objects.none()
 
     def perform_create(self, serializer):
         user = self.request.user
+        shop = None
+        
         if hasattr(user, 'shops') and user.shops.exists():
-            serializer.save(shop=user.shops.first())
-        else:
-            # Handle case where user has no shop? 
-            # For now, save without shop (or maybe raise error).
-            serializer.save()
+            shop = user.shops.first()
+        elif hasattr(user, 'shop') and user.shop:
+            shop = user.shop
+            
+        if not shop and not user.is_superuser:
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError({"shop": "You must be associated with a shop to create a role."})
+            
+        serializer.save(shop=shop)
 
 class RoleDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RoleSerializer

@@ -90,19 +90,4 @@ class EmployeeSerializer(serializers.ModelSerializer):
         return user
 
 
-class RoleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser.Role  # This is incorrect, Role is a separate model? Let me check models.py
-        # Wait, models.py has `class Role(models.Model):` at line 27.
-        # And CustomUser has `class Role(models.TextChoices):`.
-        # The user likely wants to manage the `Role` model (custom roles) not the choices.
-        # Let's verify models.py content again from previous turn or view it.
-        # Previous turn showed:
-        # 27: class Role(models.Model):
-        # 28:     name = models.CharField(max_length=50, unique=True, help_text="e.g. Manager, Cashier")
-        # 29:     description = models.TextField(blank=True)
-        # 30:     permissions = models.JSONField(default=dict, blank=True)
-        pass
-
-# I need to import Role model first.
 
