@@ -69,3 +69,42 @@ class SubscriptionPlanListView(views.APIView):
         
         serializer = SubscriptionPlanSerializer(sorted_plans, many=True)
         return response.Response(serializer.data)
+
+from django.utils import timezone
+
+class SubscriptionStatusAPIView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        # Determine Shop
+        shop = None
+        if hasattr(request.user, 'shops') and request.user.shops.exists():
+            shop = request.user.shops.first()
+        elif hasattr(request.user, 'shop') and request.user.shop:
+            shop = request.user.shop
+            
+        if not shop:
+             return response.Response({'error': 'No shop associated'}, status=404)
+        
+        # Access settings securely
+        if not hasattr(shop, 'settings'):
+             return response.Response({'error': 'Shop settings not found'}, status=404)
+             
+        settings = shop.settings
+        
+        days_remaining = None
+        if settings.plan == 'TRIAL' and settings.trial_ends_at:
+            delta = settings.trial_ends_at - timezone.now()
+            days_remaining = max(0, delta.days)
+        
+        data = {
+            'plan': settings.plan, # 'TRIAL', 'DUKA', 'ENTERPRISE'
+            'is_trial': settings.plan == 'TRIAL',
+            'grade': settings.plan, # For frontend compatibility if needed
+            'status': 'Active', # Simplified logic
+            'trial_ends_at': settings.trial_ends_at,
+            'next_billing_date': settings.next_billing_date,
+            'days_remaining': days_remaining
+        }
+        
+        return response.Response(data)
