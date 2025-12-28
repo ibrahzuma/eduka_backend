@@ -113,6 +113,9 @@ class EmployeeForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if shop:
             self.fields['branch'].queryset = shop.branches.all()
+            self.fields['assigned_role'].queryset = Role.objects.filter(shop=shop)
+        else:
+             self.fields['assigned_role'].queryset = Role.objects.none()
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -151,6 +154,9 @@ class EmployeeEditForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if shop:
             self.fields['branch'].queryset = shop.branches.all()
+            self.fields['assigned_role'].queryset = Role.objects.filter(shop=shop)
+        else:
+             self.fields['assigned_role'].queryset = Role.objects.none()
 
     def save(self, commit=True):
         user = super().save(commit=False)
