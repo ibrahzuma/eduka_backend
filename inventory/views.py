@@ -10,24 +10,25 @@ class CategoryViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if getattr(user, 'role', None) == 'SUPER_ADMIN' or user.is_superuser:
             return Category.objects.all()
-        return Category.objects.filter(shop__owner=user)
+        # Fix for Employees
+        if hasattr(user, 'shops') and user.shops.exists():
+            return Category.objects.filter(shop=user.shops.first())
+        elif hasattr(user, 'shop') and user.shop:
+            return Category.objects.filter(shop=user.shop)
+        return Category.objects.none()
 
     def perform_create(self, serializer):
         user = self.request.user
         shop = None
-        if getattr(user, 'shop', None):
-            shop = user.shop
-        elif hasattr(user, 'shops') and user.shops.exists():
+        if hasattr(user, 'shops') and user.shops.exists():
             shop = user.shops.first()
-        elif hasattr(user, 'employee_profile'):
-            shop = user.employee_profile.shop
+        elif hasattr(user, 'shop') and user.shop:
+            shop = user.shop
         
         if shop:
             serializer.save(shop=shop)
         else:
-            # Fallback or error if no shop? DRF will error if shop is mandatory and not provided.
-            # But normally we expect a shop here.
-            pass
+            raise ValidationError({"shop": "No shop found for user."})
 
 class ProductViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -37,7 +38,27 @@ class ProductViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if getattr(user, 'role', None) == 'SUPER_ADMIN' or user.is_superuser:
             return Product.objects.all()
-        return Product.objects.filter(shop__owner=user)
+        # Fix for Employees
+        if hasattr(user, 'shops') and user.shops.exists():
+            return Product.objects.filter(shop=user.shops.first())
+        elif hasattr(user, 'shop') and user.shop:
+            return Product.objects.filter(shop=user.shop)
+        return Product.objects.none()
+        
+    def perform_create(self, serializer):
+        # Auto-assign shop for Products too
+        user = self.request.user
+        shop = None
+        if hasattr(user, 'shops') and user.shops.exists():
+            shop = user.shops.first()
+        elif hasattr(user, 'shop') and user.shop:
+            shop = user.shop
+            
+        if shop:
+            serializer.save(shop=shop)
+        else:
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError({"shop": "No shop found."})
 
 class StockViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -47,4 +68,10 @@ class StockViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if getattr(user, 'role', None) == 'SUPER_ADMIN' or user.is_superuser:
             return Stock.objects.all()
-        return Stock.objects.filter(branch__shop__owner=user)
+        
+        # Fix for Employees
+        if hasattr(user, 'shops') and user.shops.exists():
+            return Stock.objects.filter(branch__shop=user.shops.first())
+        elif hasattr(user, 'shop') and user.shop:
+            return Stock.objects.filter(branch__shop=user.shop)
+        return Stock.objects.none()
