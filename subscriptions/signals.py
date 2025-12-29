@@ -27,7 +27,7 @@ def create_shop_subscription(sender, instance, created, **kwargs):
         )
         
         # Create Subscription
-        ShopSubscription.objects.create(
+        subscription = ShopSubscription.objects.create(
             shop=instance,
             plan=trial_plan,
             status='TRIAL',
@@ -35,3 +35,10 @@ def create_shop_subscription(sender, instance, created, **kwargs):
             start_date=timezone.now(),
             end_date=timezone.now() + timedelta(days=7)
         )
+
+        # Sync with ShopSettings
+        from shops.models import ShopSettings
+        settings, _ = ShopSettings.objects.get_or_create(shop=instance)
+        settings.plan = 'TRIAL'
+        settings.trial_ends_at = subscription.end_date
+        settings.save()

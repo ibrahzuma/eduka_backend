@@ -93,17 +93,30 @@ class SubscriptionStatusAPIView(views.APIView):
         settings = shop.settings
         
         days_remaining = None
-        if settings.plan == 'TRIAL' and settings.trial_ends_at:
+        plan_name = settings.plan
+        trial_ends_at = settings.trial_ends_at
+        next_billing_date = settings.next_billing_date
+
+        # Check for new Subscription model first (more accurate)
+        if hasattr(shop, 'subscription'):
+            sub = shop.subscription
+            plan_name = sub.plan.slug.upper()
+            trial_ends_at = sub.end_date if sub.status == 'TRIAL' else None
+            next_billing_date = sub.end_date if sub.status == 'ACTIVE' else None
+            
+            delta = sub.end_date - timezone.now()
+            days_remaining = max(0, delta.days)
+        elif settings.plan == 'TRIAL' and settings.trial_ends_at:
             delta = settings.trial_ends_at - timezone.now()
             days_remaining = max(0, delta.days)
         
         data = {
-            'plan': settings.plan, # 'TRIAL', 'DUKA', 'ENTERPRISE'
-            'is_trial': settings.plan == 'TRIAL',
-            'grade': settings.plan, # For frontend compatibility if needed
-            'status': 'Active', # Simplified logic
-            'trial_ends_at': settings.trial_ends_at,
-            'next_billing_date': settings.next_billing_date,
+            'plan': plan_name, # 'TRIAL', 'DUKA', 'ENTERPRISE'
+            'is_trial': plan_name == 'TRIAL',
+            'grade': plan_name,
+            'status': 'Active', 
+            'trial_ends_at': trial_ends_at,
+            'next_billing_date': next_billing_date,
             'days_remaining': days_remaining
         }
         
