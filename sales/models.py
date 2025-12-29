@@ -19,6 +19,9 @@ class Sale(models.Model):
     payment_method = models.CharField(max_length=10, choices=PaymentMethod.choices, default=PaymentMethod.CASH)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
         return f"Sale #{self.id} - {self.total_amount}"
 

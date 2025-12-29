@@ -21,8 +21,7 @@ class SaleViewSet(viewsets.ModelViewSet):
                  return Sale.objects.filter(shop_id=user.shop_id)
 
         # Fallback for Owner logic if 'shops' rel is standard
-        # Fallback for Owner logic if 'shops' rel is standard
-        return Sale.objects.filter(shop__owner=user)
+        return Sale.objects.filter(shop__owner=user).order_by('-created_at')
 
     def perform_create(self, serializer):
         user = self.request.user
