@@ -911,9 +911,21 @@ class ProductImportView(BaseShopView, TemplateView):
                                 # But if multiple branches exist, this is ambiguous.
                                 # Let's assume this import sets the quantity for the MAIN branch if it exists, or random one.
                                 if branch.is_main or branches.count() == 1:
-                                    stock.quantity = opening_stock
+                                    stock.quantity += opening_stock
                                     stock.low_stock_threshold = threshold
                                     stock.save()
+                                    
+                                    # Log Movement for Import
+                                    if opening_stock > 0:
+                                        StockMovement.objects.create(
+                                            stock=stock,
+                                            product=product,
+                                            branch=branch,
+                                            quantity_change=opening_stock,
+                                            movement_type=StockMovement.Type.ADD,
+                                            reason="Bulk Import: Added via CSV",
+                                            user=request.user
+                                        )
 
                     except Exception as e:
                         errors.append(f"Row {index} ({name}): {str(e)}")
