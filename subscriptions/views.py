@@ -114,8 +114,15 @@ class CheckPaymentStatusView(LoginRequiredMixin, View):
         # Assuming API returns status in 'status' field: 'SUCCESS', 'PENDING', 'FAILED'
         # Adjust parsing based on actual documentation response
         api_status = api_response.get('status', '').upper()
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Payment Status Check for {payment_id}: {api_status} (Ref: {payment.transaction_id})")
         
-        if api_status in ['SUCCESS', 'COMPLETED', 'PAID']:
+        # Enhanced Status Check
+        SUCCESS_STATUSES = ['SUCCESS', 'COMPLETED', 'PAID', 'SUCCESSFUL']
+        FAILED_STATUSES = ['FAILED', 'CANCELLED', 'REJECTED']
+
+        if api_status in SUCCESS_STATUSES:
             payment.status = 'COMPLETED'
             payment.save()
             

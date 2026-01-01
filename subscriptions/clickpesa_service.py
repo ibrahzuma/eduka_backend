@@ -99,8 +99,9 @@ class ClickPesaService:
     def initiate_ussd_push(self, phone_number, amount, reference):
         """Trigger the USSD Push on user's phone"""
         # New Endpoint: /third-parties/payments/initiate-ussd-push-request
-        base_url = "https://api.clickpesa.com"
-        url = f"{base_url}/third-parties/payments/initiate-ussd-push-request"
+        # New Endpoint: /third-parties/payments/initiate-ussd-push-request
+        # base_url = "https://api.clickpesa.com" # REMOVED HARDCODE
+        url = f"{self.api_url}/third-parties/payments/initiate-ussd-push-request"
         
         formatted_phone = self.format_phone(phone_number)
         
@@ -154,8 +155,8 @@ class ClickPesaService:
 
     def check_status(self, order_reference):
         """Poll for payment status"""
-        base_url = "https://api.clickpesa.com" 
-        url = f"{base_url}/third-parties/payments/{order_reference}"
+        # base_url = "https://api.clickpesa.com" # REMOVED HARDCODE
+        url = f"{self.api_url}/third-parties/payments/{order_reference}"
         
         # Helper to make request
         def make_request(refresh_token=False):
