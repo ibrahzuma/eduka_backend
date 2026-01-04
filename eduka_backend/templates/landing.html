@@ -655,9 +655,9 @@
                         // Features List
                         const features = plan.features || {};
                         let list = '';
-                        if (features.shops) list += `<li><i class="bi bi-check-circle-fill text-primary me-2"></i>${features.shops} Shop(s)</li>`;
-                        if (features.users) list += `<li><i class="bi bi-check-circle-fill text-primary me-2"></i>${features.users} Staff Account(s)</li>`;
-                        // Always include support
+                        if (plan.max_shops) list += `<li><i class="bi bi-check-circle-fill text-primary me-2"></i>${plan.max_shops} Shop</li>`;
+                        if (plan.max_users) list += `<li><i class="bi bi-check-circle-fill text-primary me-2"></i>${plan.max_users} Staff Account(s)</li>`;
+                        // Always include priority support
                         list += `<li><i class="bi bi-check-circle-fill text-primary me-2"></i>Priority Support</li>`;
 
                         // Styling
