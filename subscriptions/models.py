@@ -25,6 +25,19 @@ class SubscriptionPlan(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        # Enforce constant limits for all plans
+        self.max_shops = 1
+        self.max_users = 5
+        self.max_products = 10000
+        
+        # Ensure Priority Support is in features
+        if not self.features:
+            self.features = {}
+        self.features['priority_support'] = True
+        
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.name
 

@@ -33,7 +33,7 @@ class SubscriptionPlanForm(forms.ModelForm):
             'name', 'slug', 'description', 
             'price_daily', 'price_weekly', 'price_monthly', 
             'price_quarterly', 'price_biannually', 'price_yearly',
-            'max_shops', 'max_users', 'max_products', 'features', 'is_active'
+            'features', 'is_active'
         ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -47,9 +47,6 @@ class SubscriptionPlanForm(forms.ModelForm):
             'price_biannually': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'price_yearly': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             
-            'max_shops': forms.NumberInput(attrs={'class': 'form-control'}),
-            'max_users': forms.NumberInput(attrs={'class': 'form-control'}),
-            'max_products': forms.NumberInput(attrs={'class': 'form-control'}),
             'features': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
