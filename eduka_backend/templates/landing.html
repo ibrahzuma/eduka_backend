@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <!-- CSS -->
@@ -26,23 +26,21 @@
 
     <style>
         :root {
-            --primary: #4f46e5;
-            /* Indigo 600 */
-            --primary-dark: #4338ca;
-            /* Indigo 700 */
+            --primary: #6366f1;
+            /* Indigo 500 */
+            --primary-glow: rgba(99, 102, 241, 0.4);
             --secondary: #0f172a;
-            /* Slate 900 */
-            --accent: #818cf8;
-            /* Indigo 400 */
-            --bg-light: #f8fafc;
+            --accent: #f43f5e;
+            /* Rose 500 */
+            --bg-glass: rgba(255, 255, 255, 0.7);
             --text-main: #1e293b;
             --text-muted: #64748b;
         }
 
         body {
-            font-family: 'Instrument Sans', sans-serif;
+            font-family: 'Outfit', sans-serif;
             color: var(--text-main);
-            background-color: #fff;
+            background: #fff;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
@@ -52,289 +50,303 @@
         h3,
         h4,
         h5,
-        h6,
-        .brand-font {
+        h6 {
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: var(--secondary);
-            font-weight: 700;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
 
-        /* --- Navbar --- */
+        /* Animated Mesh Background */
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: #fff;
+            background-image:
+                radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
+            opacity: 0.05;
+        }
+
+        /* Custom Navbar */
         .navbar {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-            padding: 1rem 0;
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 1.2rem 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .navbar.scrolled {
+            padding: 0.8rem 0;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
         }
 
         .navbar-brand span {
+            background: linear-gradient(135deg, var(--primary), #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             font-weight: 800;
-            letter-spacing: -0.03em;
         }
 
         .nav-link {
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-main);
-            font-size: 0.95rem;
-            margin: 0 0.5rem;
+            margin: 0 0.8rem;
             position: relative;
         }
 
-        .nav-link:hover {
-            color: var(--primary);
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
         }
 
-        /* --- Buttons --- */
-        .btn-primary-glow {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Premium Buttons */
+        .btn-premium {
+            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
+            color: #fff;
+            padding: 0.8rem 2rem;
+            border-radius: 14px;
+            font-weight: 700;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 99px;
-            /* Pill shape */
-            font-weight: 600;
-            box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.3);
-            transition: all 0.2s ease;
+            box-shadow: 0 10px 20px -5px var(--primary-glow);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .btn-primary-glow:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px 0 rgba(79, 70, 229, 0.4);
-            color: white;
+        .btn-premium:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 30px -5px var(--primary-glow);
+            color: #fff;
         }
 
-        .btn-outline-modern {
-            background: white;
-            border: 1px solid #e2e8f0;
-            color: var(--text-main);
-            padding: 0.75rem 1.5rem;
-            border-radius: 99px;
-            font-weight: 600;
+        .btn-modern-outline {
+            padding: 0.8rem 2rem;
+            border-radius: 14px;
+            font-weight: 700;
+            border: 2px solid #e2e8f0;
+            background: transparent;
             transition: all 0.2s;
         }
 
-        .btn-outline-modern:hover {
-            border-color: var(--text-main);
-            background: var(--bg-light);
-            color: var(--secondary);
-        }
-
-        /* --- Hero Section --- */
-        .hero-section {
-            padding: 160px 0 100px;
-            position: relative;
-            background: radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(129, 140, 248, 0.05) 0%, transparent 40%);
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 16px;
-            background: rgba(79, 70, 229, 0.05);
+        .btn-modern-outline:hover {
+            border-color: var(--primary);
             color: var(--primary);
-            border: 1px solid rgba(79, 70, 229, 0.1);
-            border-radius: 100px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            margin-bottom: 2rem;
-            transition: transform 0.2s;
         }
 
-        .hero-badge:hover {
-            transform: scale(1.02);
-            background: rgba(79, 70, 229, 0.08);
+        /* Hero Section */
+        .hero-section {
+            padding: 180px 0 120px;
+            text-align: center;
+        }
+
+        .hero-tag {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2rem;
+            display: inline-block;
         }
 
         .hero-title {
-            font-size: 4.5rem;
-            line-height: 1.05;
-            letter-spacing: -0.04em;
+            font-size: 5rem;
+            line-height: 1.1;
             margin-bottom: 1.5rem;
-            background: linear-gradient(to right, #0f172a 40%, #4f46e5 100%);
-            background-clip: text;
+            background: linear-gradient(to bottom, #0f172a, #334155);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 991px) {
             .hero-title {
-                font-size: 3rem;
-            }
-
-            .hero-section {
-                padding-top: 120px;
+                font-size: 3.5rem;
             }
         }
 
-        .hero-subtitle {
-            font-size: 1.25rem;
+        .hero-desc {
+            font-size: 1.35rem;
             color: var(--text-muted);
-            line-height: 1.6;
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto 3rem;
+            line-height: 1.6;
         }
 
-        /* Mockup */
-        .app-mockup {
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 40px 80px -12px rgba(0, 0, 0, 0.15),
-                0 0 0 8px rgba(255, 255, 255, 0.6),
+        /* Hero Mockup Glassmorphism */
+        .floating-mockup {
+            position: relative;
+            background: #fff;
+            border-radius: 30px;
+            padding: 10px;
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.15),
                 0 0 0 1px rgba(0, 0, 0, 0.05);
-            transform: perspective(1000px) rotateX(2deg);
-            transition: transform 0.5s ease;
+            transform: perspective(1000px) rotateX(5deg);
+            transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        .app-mockup:hover {
-            transform: perspective(1000px) rotateX(0deg) translateY(-10px);
+        .floating-mockup:hover {
+            transform: perspective(1000px) rotateX(0deg) translateY(-20px);
         }
 
-        /* --- Sections --- */
-        .section-padding {
-            padding: 80px 0;
+        /* Features Section */
+        .features-section {
+            padding: 120px 0;
+            background: #f8fafc;
         }
 
-        .bg-gradient-soft {
-            background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
-        }
-
-        /* Feature Cards */
         .feature-card {
-            background: white;
-            border-radius: 24px;
-            padding: 2rem;
+            background: #fff;
+            padding: 3rem 2rem;
+            border-radius: 32px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: all 0.4s;
             height: 100%;
-            border: 1px solid #f1f5f9;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.05);
-            border-color: var(--accent);
+            transform: translateY(-12px);
+            box-shadow: 0 40px 60px -15px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary);
         }
 
-        .feature-icon {
-            width: 56px;
-            height: 56px;
-            background: #eef2ff;
-            color: var(--primary);
-            border-radius: 16px;
+        .feature-icon-wrapper {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05));
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Stats Styling */
-        .stat-item h3 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: var(--primary);
-            margin-bottom: 0.5rem;
+            margin-bottom: 2rem;
         }
 
-        .stat-item p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
+        /* Pricing Section */
+        .pricing-section {
+            padding: 120px 0;
         }
 
-        /* Pricing */
         .pricing-card {
-            border: 1px solid #e2e8f0;
-            border-radius: 24px;
-            padding: 2.5rem;
-            background: white;
-            transition: 0.3s;
+            background: #fff;
+            padding: 3.5rem 3rem;
+            border-radius: 40px;
+            border: 2px solid #f1f5f9;
+            transition: 0.4s;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary);
+            box-shadow: 0 30px 60px -12px rgba(99, 102, 241, 0.2);
+        }
+
+        .price-tag {
+            font-size: 3rem;
+            font-weight: 800;
+        }
+
+        .pricing-list li {
+            margin-bottom: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pricing-list i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 0;
+        }
+
+        .cta-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 50px;
+            padding: 6rem;
+            color: #fff;
             position: relative;
             overflow: hidden;
         }
 
-        .pricing-card.emphasized {
-            border-color: var(--primary);
-            box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.15);
+        .cta-gradient h2 {
+            color: #fff;
         }
 
-        .pricing-ribbon {
+        .blob {
             position: absolute;
-            top: 20px;
-            right: -30px;
+            width: 400px;
+            height: 400px;
             background: var(--primary);
-            color: white;
-            padding: 5px 30px;
-            transform: rotate(45deg);
-            font-size: 0.75rem;
-            font-weight: 700;
+            filter: blur(80px);
+            opacity: 0.2;
+            z-index: 0;
         }
 
-        /* Testimonials */
-        .testimonial-card {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 20px;
-            border: 1px solid #f1f5f9;
+        /* Animations */
+        [data-aos] {
+            pointer-events: none;
         }
 
-        .stars {
-            color: #fbbf24;
-        }
-
-        /* Footer */
-        footer {
-            background: white;
-            border-top: 1px solid #f1f5f9;
-            padding: 4rem 0 2rem;
-        }
-
-        .footer-link {
-            color: var(--text-muted);
-            text-decoration: none;
-            margin-bottom: 0.75rem;
-            display: block;
-            transition: 0.2s;
-        }
-
-        .footer-link:hover {
-            color: var(--primary);
+        .aos-animate {
+            pointer-events: auto;
         }
     </style>
 </head>
 
-<body data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="100">
+<body>
+    <div class="mesh-bg"></div>
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-                <img src="{% static 'img/logoeduka.png' %}" alt="" width="36"
-                    onerror="this.src='https://placehold.co/36x36/4f46e5/fff?text=E'">
-                <span class="fs-4">eDuka</span>
+                <img src="{% static 'img/logoeduka.png' %}" alt="eDuka" width="40"
+                    onerror="this.src='https://placehold.co/40x40/6366f1/fff?text=E'">
+                <span class="fs-3">eDuka</span>
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navContent">
-                <i class="bi bi-list fs-2"></i>
+                <i class="bi bi-list fs-1"></i>
             </button>
 
             <div class="collapse navbar-collapse" id="navContent">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#testimonials">Stories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#features">Capabilities</a></li>
                     <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#testimonials">Success Stories</a></li>
                 </ul>
-                <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                <div class="d-flex align-items-center gap-3">
                     {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="btn btn-primary-glow">Go to Dashboard</a>
+                    <a href="{% url 'dashboard' %}" class="btn-premium">Dashboard</a>
                     {% else %}
-                    <a href="{% url 'login' %}" class="fw-semibold text-decoration-none text-dark">Log in</a>
-                    <a href="{% url 'register' %}" class="btn btn-primary-glow">Start Free Trial</a>
+                    <a href="{% url 'login' %}" class="fw-bold text-dark text-decoration-none px-3">Log In</a>
+                    <a href="{% url 'register' %}" class="btn-premium">Get Started</a>
                     {% endif %}
                 </div>
             </div>
@@ -342,198 +354,118 @@
     </nav>
 
     <!-- Hero Section -->
-    <header class="hero-section text-center">
+    <header class="hero-section">
         <div class="container">
-            <div data-aos="fade-down">
-                <a href="#whats-new" class="text-decoration-none">
-                    <div class="hero-badge">
-                        <span class="badge bg-primary rounded-pill">New</span>
-                        <span>eDuka 2.0 is now live</span>
-                        <i class="bi bi-arrow-right"></i>
-                    </div>
-                </a>
+            <div data-aos="fade-up">
+                <span class="hero-tag">The Future of Retail is Here</span>
             </div>
-
             <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">
-                The operating system for <br>
-                smart retail businesses.
+                Run your entire shop <br> from your pocket.
             </h1>
-
-            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
-                Replace your notebooks with a simple, powerful POS. Track inventory, manage employees,
-                and watch your profits grow from any device.
+            <p class="hero-desc" data-aos="fade-up" data-aos-delay="200">
+                Ditch the paperwork. eDuka is the ultra-modern POS and inventory system designed to help Tanzanian
+                businesses scale with ease.
             </p>
-
-            <div class="d-flex justify-content-center gap-3 mb-5" data-aos="fade-up" data-aos-delay="300">
-                {% if user.is_authenticated %}
-                <a href="{% url 'dashboard' %}" class="btn btn-primary-glow btn-lg px-5">Go to Dashboard</a>
-                {% else %}
-                <a href="{% url 'register' %}" class="btn btn-primary-glow btn-lg px-5">Start 14-Day Free Trial</a>
-                <a href="#demo" class="btn btn-outline-modern btn-lg px-5"><i class="bi bi-play-circle me-2"></i>Watch
-                    Demo</a>
-                {% endif %}
+            <div class="d-flex justify-content-center gap-4 mb-5" data-aos="fade-up" data-aos-delay="300">
+                <a href="{% url 'register' %}" class="btn-premium btn-lg px-5 py-3">Start Free Trial</a>
+                <a href="#features" class="btn-modern-outline btn-lg px-5 py-3">Explore Features</a>
             </div>
 
-            <div class="text-muted small fw-medium mb-5" data-aos="fade-in" data-aos-delay="400">
-                <i class="bi bi-check2-circle text-success me-1"></i> No credit card required &nbsp;&bull;&nbsp;
-                <i class="bi bi-check2-circle text-success me-1"></i> Cancel anytime
-            </div>
-
-            <div class="row justify-content-center" data-aos="zoom-in" data-aos-delay="500">
-                <div class="col-lg-10">
-                    <div class="app-mockup">
-                        <img src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?q=80&w=1200&auto=format&fit=crop"
-                            alt="eDuka Dashboard" class="img-fluid w-100 d-none d-md-block">
-                        <img src="https://images.unsplash.com/photo-1556741533-974f8e62a92d?q=80&w=1000&auto=format&fit=crop"
-                            alt="eDuka Mobile" class="img-fluid w-100 d-md-none rounded-4">
+            <div class="row justify-content-center pt-5" data-aos="zoom-in-up" data-aos-delay="400">
+                <div class="col-lg-11">
+                    <div class="floating-mockup">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop"
+                            class="img-fluid rounded-4 shadow-sm" alt="eDuka Dashboard">
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Social Proof -->
-    <section class="py-5 border-bottom">
-        <div class="container text-center">
-            <p class="small text-muted fw-bold letter-spacing-1 mb-4">TRUSTED BY OVER 500+ BUSINESSES IN TANZANIA</p>
-            <div class="row opacity-50 grayscale g-4 align-items-center justify-content-center">
-                <div class="col-6 col-md-2 fw-bold fs-5">FARMACY+</div>
-                <div class="col-6 col-md-2 fw-bold fs-5">DukaLetu</div>
-                <div class="col-6 col-md-2 fw-bold fs-5">MegaStore</div>
-                <div class="col-6 col-md-2 fw-bold fs-5">TechnoFix</div>
-                <div class="col-6 col-md-2 fw-bold fs-5">FreshMarket</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features -->
-    <section id="features" class="section-padding bg-gradient-soft">
+    <!-- Features Section -->
+    <section id="features" class="features-section">
         <div class="container">
-            <div class="text-center mb-5" data-aos="fade-up">
-                <h2 class="display-5 fw-bold mb-3">Everything you need to grow.</h2>
-                <p class="text-muted lead">Powerful tools ensuring you never miss a sale.</p>
+            <div class="text-center mb-5 pb-5">
+                <h2 class="display-4 fw-bold mb-3" data-aos="fade-up">Built for modern commerce</h2>
+                <p class="text-muted lead" data-aos="fade-up" data-aos-delay="100">Everything you need, nothing you
+                    don't. Optimized for speed and reliability.</p>
             </div>
 
-            <div class="row g-4">
-                <!-- Feature 1 -->
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="row g-5">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
                     <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-lightning-charge-fill"></i></div>
-                        <h4 class="mb-3">Lightning Fast POS</h4>
-                        <p class="text-muted mb-0">Process sales in seconds. Works offline and syncs automatically when
-                            you're back online.</p>
+                        <div class="feature-icon-wrapper"><i class="bi bi-lightning-charge"></i></div>
+                        <h4>Instant Checkout</h4>
+                        <p class="text-muted">Process transactions in milliseconds. Works flawlessly even when the
+                            internet is down.</p>
                     </div>
                 </div>
-                <!-- Feature 2 -->
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
                     <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-bar-chart-line-fill"></i></div>
-                        <h4 class="mb-3">Smart Analytics</h4>
-                        <p class="text-muted mb-0">Understand your business at a glance. Track daily profits, top
-                            selling items, and employee performance.</p>
+                        <div class="feature-icon-wrapper"><i class="bi bi-box-seam"></i></div>
+                        <h4>Smart Inventory</h4>
+                        <p class="text-muted">Real-time tracking across all locations. Get notified before you run out
+                            of stock.</p>
                     </div>
                 </div>
-                <!-- Feature 3 -->
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
                     <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-box-seam-fill"></i></div>
-                        <h4 class="mb-3">Inventory Control</h4>
-                        <p class="text-muted mb-0">Get low stock alerts before you run out. Manage stock across multiple
-                            branches effortlessly.</p>
-                    </div>
-                </div>
-                <!-- Feature 4 -->
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-people-fill"></i></div>
-                        <h4 class="mb-3">Team Management</h4>
-                        <p class="text-muted mb-0">Create staff accounts with specific roles. Track who sold what and
-                            prevent theft.</p>
-                    </div>
-                </div>
-                <!-- Feature 5 -->
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="500">
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-receipt"></i></div>
-                        <h4 class="mb-3">Digital Receipts</h4>
-                        <p class="text-muted mb-0">Save money on paper. Send professional receipts via SMS or WhatsApp
-                            instantly.</p>
-                    </div>
-                </div>
-                <!-- Feature 6 -->
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="600">
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
-                        <h4 class="mb-3">Bank-Grade Security</h4>
-                        <p class="text-muted mb-0">Your data is encrypted and backed up daily. Sleep soundly knowing
-                            your business is safe.</p>
+                        <div class="feature-icon-wrapper"><i class="bi bi-graph-up-arrow"></i></div>
+                        <h4>Live Insights</h4>
+                        <p class="text-muted">Powerful analytics at your fingertips. Identify your best products and top
+                            performers instantly.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="py-5 bg-white border-top border-bottom">
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing-section">
         <div class="container">
-            <div class="row text-center g-4">
-                <div class="col-md-4 stat-item" data-aos="zoom-in">
-                    <h3>10k+</h3>
-                    <p>Transactions Daily</p>
-                </div>
-                <div class="col-md-4 stat-item" data-aos="zoom-in" data-aos-delay="100">
-                    <h3>500+</h3>
-                    <p>Active Shops</p>
-                </div>
-                <div class="col-md-4 stat-item" data-aos="zoom-in" data-aos-delay="200">
-                    <h3>99.9%</h3>
-                    <p>Uptime Guarantee</p>
+            <div class="text-center mb-5 pb-5">
+                <h2 class="display-4 fw-bold" data-aos="fade-up">Simple, Honest Pricing</h2>
+                <p class="text-muted lead" data-aos="fade-up" data-aos-delay="100">All plans include our standardized
+                    enterprise-grade features.</p>
+            </div>
+
+            <div id="pricing-container" class="row justify-content-center g-4">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Testimonials -->
-    <section id="testimonials" class="section-padding bg-light">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="fw-bold">Loved by Tanzanian Business Owners</h2>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-6" data-aos="fade-right">
-                    <div class="testimonial-card h-100 shadow-sm">
-                        <div class="stars mb-3">
-                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                class="bi bi-star-fill"></i>
+    <section id="testimonials" class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-5">
+                    <h2 class="display-5 fw-bold mb-4">Join the retail revolution.</h2>
+                    <p class="lead text-muted mb-5">Hundreds of shop owners have already switched to eDuka to reclaim
+                        their time and grow their profits.</p>
+                    <div class="d-flex gap-4">
+                        <div class="stat">
+                            <h3 class="mb-0">500+</h3>
+                            <small class="text-muted fw-bold">Active Shops</small>
                         </div>
-                        <p class="lead mb-4">"Before eDuka, I was losing money because I couldn't track my stock. Now I
-                            can see everything from my phone. It's a game changer."</p>
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
-                                style="width: 48px; height: 48px;">JA</div>
-                            <div>
-                                <h6 class="mb-0 fw-bold">Juma Ali</h6>
-                                <small class="text-muted">Owner, City Pharmacy</small>
-                            </div>
+                        <div class="stat border-start ps-4">
+                            <h3 class="mb-0">1M+</h3>
+                            <small class="text-muted fw-bold">Sales Recorded</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6" data-aos="fade-left">
-                    <div class="testimonial-card h-100 shadow-sm">
-                        <div class="stars mb-3">
-                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                class="bi bi-star-fill"></i>
-                        </div>
-                        <p class="lead mb-4">"The best part is the employee management. I know exactly when my shop
-                            opens and who is selling what. Highly recommended!"</p>
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
-                                style="width: 48px; height: 48px;">SK</div>
-                            <div>
-                                <h6 class="mb-0 fw-bold">Sarah K.</h6>
-                                <small class="text-muted">Manager, Fresh Mart</small>
+                <div class="col-lg-7">
+                    <div class="row g-4">
+                        <div class="col-md-12" data-aos="fade-left">
+                            <div class="card border-0 shadow-sm p-4 rounded-4">
+                                <p class="fs-5 italic">"eDuka transformed how I manage my pharmacy. I can track expiry
+                                    dates and inventory from home with total peace of mind."</p>
+                                <div class="d-flex align-items-center gap-3 mt-3">
+                                    <div class="bg-primary text-white rounded-circle p-2">JA</div>
+                                    <h6 class="mb-0">Juma Ali, Owner</h6>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -542,154 +474,105 @@
         </div>
     </section>
 
-    <!-- Pricing -->
-    <section id="pricing" class="section-padding">
-        <div class="container">
-            <div class="text-center mb-5">
-                <span class="text-primary fw-bold text-uppercase small letter-spacing-1">Flexible Pricing</span>
-                <h2 class="display-5 fw-bold mt-2">Start for free, grow together.</h2>
-                <p class="text-muted">Transparent pricing. No hidden fees.</p>
-            </div>
+    <!-- CTA Section -->
+    <section class="cta-section container text-center">
+        <div class="cta-gradient shadow-lg">
+            <div class="blob" style="top: -100px; left: -100px;"></div>
+            <div class="blob" style="bottom: -100px; right: -100px; background: #f43f5e;"></div>
 
-            <div id="pricing-container" class="row justify-content-center g-4">
-                <div class="col-12 text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading plans...</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Call to Action -->
-    <section class="section-padding bg-gradient-soft text-center py-5">
-        <div class="container" data-aos="zoom-in">
-            <div class="bg-dark text-white rounded-5 p-5 position-relative overflow-hidden">
-                <!-- Decorative Circle -->
-                <div class="position-absolute top-0 end-0 bg-primary opacity-25 rounded-circle"
-                    style="width: 300px; height: 300px; transform: translate(30%, -30%); filter: blur(50px);"></div>
-
-                <h2 class="display-6 fw-bold mb-4 position-relative">Ready to modernize your business?</h2>
-                <p class="lead text-white-50 mb-5 position-relative">Join 500+ businesses using eDuka today. Get started
-                    in less than 2 minutes.</p>
-                <a href="{% url 'register' %}" class="btn btn-primary-glow btn-lg px-5 position-relative">Create Free
-                    Account</a>
-            </div>
+            <h2 class="display-4 fw-bold mb-4 position-relative">Ready to upgrade your shop?</h2>
+            <p class="lead mb-5 position-relative opacity-75">Scale your business with the most advanced retail platform
+                in East Africa.</p>
+            <a href="{% url 'register' %}" class="btn btn-premium btn-lg px-5 py-3 position-relative">Create Your
+                Account</a>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="row g-5 mb-5 justify-content-between">
+    <footer class="py-5 border-top mt-5">
+        <div class="container py-5">
+            <div class="row g-5">
                 <div class="col-lg-4">
-                    <a href="#" class="d-flex align-items-center gap-2 mb-3 text-decoration-none text-dark">
-                        <img src="{% static 'img/logoeduka.png' %}" width="32" alt="eDuka">
-                        <span class="fw-bold fs-4 brand-font">eDuka</span>
+                    <a class="navbar-brand d-flex align-items-center gap-2 mb-4" href="#">
+                        <img src="{% static 'img/logoeduka.png' %}" alt="eDuka" width="30">
+                        <span class="fs-4">eDuka</span>
                     </a>
-                    <p class="text-muted">Making retail simple, profitable, and enjoyable for African businesses.</p>
-                    <div class="d-flex gap-3 mt-4">
-                        <a href="#" class="text-muted fs-5"><i class="bi bi-twitter-x"></i></a>
-                        <a href="#" class="text-muted fs-5"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-muted fs-5"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-muted fs-5"><i class="bi bi-linkedin"></i></a>
-                    </div>
+                    <p class="text-muted">The ultimate platform for modern retail management. Empowering store owners
+                        across Tanzania.</p>
                 </div>
-
-                <div class="col-6 col-lg-2">
-                    <h6 class="fw-bold mb-3">Product</h6>
-                    <a href="#" class="footer-link">Features</a>
-                    <a href="#" class="footer-link">Pricing</a>
-                    <a href="#" class="footer-link">Download App</a>
-                    <a href="#" class="footer-link">Updates</a>
+                <div class="col-lg-2 offset-lg-2">
+                    <h6 class="fw-bold mb-4">Product</h6>
+                    <ul class="list-unstyled text-muted d-grid gap-2">
+                        <li>Features</li>
+                        <li>Pricing</li>
+                        <li>Support</li>
+                    </ul>
                 </div>
-
-                <div class="col-6 col-lg-2">
-                    <h6 class="fw-bold mb-3">Company</h6>
-                    <a href="#" class="footer-link">About Us</a>
-                    <a href="#" class="footer-link">Careers</a>
-                    <a href="#" class="footer-link">Blog</a>
-                    <a href="#" class="footer-link">Contact</a>
-                </div>
-
-                <div class="col-6 col-lg-2">
-                    <h6 class="fw-bold mb-3">Legal</h6>
-                    <a href="#" class="footer-link">Privacy Policy</a>
-                    <a href="#" class="footer-link">Terms of Service</a>
+                <div class="col-lg-2">
+                    <h6 class="fw-bold mb-4">Company</h6>
+                    <ul class="list-unstyled text-muted d-grid gap-2">
+                        <li>About</li>
+                        <li>Contact</li>
+                        <li>Terms</li>
+                    </ul>
                 </div>
             </div>
-
-            <div class="border-top pt-4 text-center">
-                <p class="small text-muted mb-0">&copy; {% now "Y" %} eDuka SaaS. All Rights Reserved.</p>
+            <div class="mt-5 pt-5 border-top text-center text-muted small">
+                &copy; 2026 eDuka Retail OS. All rights reserved.
             </div>
         </div>
     </footer>
-
 
     <!-- JS Libs -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <script>
-        // Init Animation
-        AOS.init({
-            duration: 800,
-            once: true,
-            offset: 50
+        AOS.init({ duration: 1000, once: true, offset: 100 });
+
+        // Scroll Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('.navbar');
+            if (window.scrollY > 50) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
         });
 
-        // Fetch Pricing
-        document.addEventListener('DOMContentLoaded', function () {
+        // Pricing Logic
+        document.addEventListener('DOMContentLoaded', () => {
             fetch('/subscriptions/api/plans/')
                 .then(r => r.json())
                 .then(data => {
                     const container = document.getElementById('pricing-container');
                     container.innerHTML = '';
 
-                    if (!data.length) {
-                        container.innerHTML = '<div class="text-center text-muted">Pricing plans coming soon.</div>';
-                        return;
-                    }
-
-                    data.forEach((plan, index) => {
-                        // Features List
-                        const features = plan.features || {};
-                        let list = '';
-                        if (plan.max_shops) list += `<li><i class="bi bi-check-circle-fill text-primary me-2"></i>${plan.max_shops} Shop</li>`;
-                        if (plan.max_users) list += `<li><i class="bi bi-check-circle-fill text-primary me-2"></i>${plan.max_users} Staff Account(s)</li>`;
-                        // Always include priority support
-                        list += `<li><i class="bi bi-check-circle-fill text-primary me-2"></i>Priority Support</li>`;
-
-                        // Styling
-                        const isPopular = plan.name.toLowerCase().includes('gold') || plan.name.toLowerCase().includes('standard');
-                        const emphasisClass = isPopular ? 'emphasized' : '';
-                        const badge = isPopular ? '<div class="pricing-ribbon">POPULAR</div>' : '';
-                        const duration = index % 2 === 0 ? '/mo' : '/day'; // Mock cycle logic if not in API
+                    data.forEach((plan, idx) => {
+                        const isFeatured = plan.name.toLowerCase().includes('pro');
+                        const cardClass = isFeatured ? 'featured' : '';
+                        const btnClass = isFeatured ? 'btn-premium' : 'btn-modern-outline';
 
                         const html = `
-                             <div class="col-md-4 col-sm-6" data-aos="fade-up" data-aos-delay="${index * 100}">
-                                 <div class="pricing-card h-100 d-flex flex-column ${emphasisClass}">
-                                     ${badge}
-                                     <h4 class="fw-bold mb-1">${plan.name}</h4>
-                                     <div class="my-4">
-                                        <span class="display-6 fw-bold text-dark">${plan.display_price}</span>
-                                        <span class="text-muted small fw-bold">TZS</span>
-                                     </div>
-                                     <ul class="list-unstyled d-grid gap-2 mb-4 text-muted small">
-                                         ${list}
-                                     </ul>
-                                     <div class="mt-auto">
-                                         <a href="{% url 'register' %}" class="btn ${isPopular ? 'btn-primary-glow' : 'btn-outline-modern'} w-100">Get Started</a>
-                                     </div>
-                                 </div>
-                             </div>
-                         `;
+                            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="${idx * 100}">
+                                <div class="pricing-card h-100 d-flex flex-column ${cardClass}">
+                                    <h4 class="mb-2">${plan.name}</h4>
+                                    <p class="text-muted small">${plan.description}</p>
+                                    <div class="my-4">
+                                        <span class="price-tag">${plan.display_price.split('/')[0]}</span>
+                                        <span class="text-muted">/ ${plan.display_price.split('/')[1]}</span>
+                                    </div>
+                                    <ul class="list-unstyled pricing-list mb-5">
+                                        <li><i class="bi bi-check-circle-fill"></i> ${plan.max_shops} Shop</li>
+                                        <li><i class="bi bi-check-circle-fill"></i> ${plan.max_users} Staff Accounts</li>
+                                        <li><i class="bi bi-check-circle-fill"></i> Priority Support</li>
+                                        <li><i class="bi bi-check-circle-fill"></i> Daily Backups</li>
+                                    </ul>
+                                    <div class="mt-auto">
+                                        <a href="{% url 'register' %}" class="btn ${btnClass} w-100">Choose ${plan.name}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
                         container.insertAdjacentHTML('beforeend', html);
                     });
-                })
-                .catch(e => {
-                    console.error(e);
-                    document.getElementById('pricing-container').innerHTML = '<p class="text-danger">Failed to load plans.</p>';
                 });
         });
     </script>
