@@ -1,6 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../core/api_service.dart';
+import '../../../core/api_service.dart';
 
 class AuthRepository {
   final ApiService _apiService = ApiService();

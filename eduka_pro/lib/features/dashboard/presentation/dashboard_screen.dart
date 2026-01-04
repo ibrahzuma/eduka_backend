@@ -39,7 +39,7 @@ class DashboardScreen extends StatelessWidget {
                       title: 'Growth',
                       value: '+12.5%',
                       icon: Icons.trending_up_rounded,
-                      color: Colors.emeraldAccent,
+                      color: Colors.tealAccent,
                     ),
                     _buildBentoTile(
                       title: 'Low Stock',
