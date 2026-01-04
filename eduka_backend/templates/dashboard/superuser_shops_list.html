@@ -52,6 +52,11 @@
                         <td class="px-4 py-3">
                             <div class="fw-semibold">{{ shop.owner.username }}</div>
                             <div class="small text-muted">{{ shop.owner.email }}</div>
+                            {% if shop.owner.phone %}
+                            <div class="small text-primary fw-bold" style="font-size: 0.7rem;">
+                                <i class="bi bi-telephone me-1"></i>{{ shop.owner.phone }}
+                            </div>
+                            {% endif %}
                         </td>
                         <td class="px-4 py-3">
                             {% if shop.subscription.plan %}

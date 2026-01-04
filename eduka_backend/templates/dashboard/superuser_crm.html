@@ -168,6 +168,11 @@
                                 <div>
                                     <div class="fw-bold text-gray-900">{{ shop.owner.username }}</div>
                                     <div class="small text-muted">{{ shop.owner.email }}</div>
+                                    {% if shop.owner.phone %}
+                                    <div class="small text-primary fw-bold" style="font-size: 0.75rem;">
+                                        <i class="bi bi-telephone-fill me-1"></i>{{ shop.owner.phone }}
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </td>
