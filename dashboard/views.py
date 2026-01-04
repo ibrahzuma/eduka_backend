@@ -251,6 +251,67 @@ class SuperUserDashboardView(LoginRequiredMixin, TemplateView):
                 
         return redirect('superuser_dashboard')
 
+class SuperUserCRMView(LoginRequiredMixin, TemplateView):
+    template_name = "dashboard/superuser_crm.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            from django.core.exceptions import PermissionDenied
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from subscriptions.models import ShopSubscription, SubscriptionPayment
+        from django.db.models import Count, Q
+        from django.utils import timezone
+        from datetime import timedelta
+
+        # 1. Pipeline Stats
+        total_shops = Shop.objects.count()
+        context['total_shops'] = total_shops
+        context['active_paid'] = ShopSubscription.objects.filter(status='ACTIVE').count()
+        context['active_trials'] = ShopSubscription.objects.filter(status='TRIAL').count()
+        context['expired'] = ShopSubscription.objects.filter(status='EXPIRED').count()
+
+        # 2. Revenue (MRR Estimation)
+        # Assuming last 30 days of completed payments as monthly revenue proxy
+        last_30_days = timezone.now() - timedelta(days=30)
+        context['revenue_30d'] = SubscriptionPayment.objects.filter(
+            status='COMPLETED', 
+            created_at__gte=last_30_days
+        ).aggregate(total=Sum('amount'))['total'] or 0
+
+        # 3. Customer List (Consolidated CRM View)
+        # We want to see Shops + Owners + Subscription Status
+        shops = Shop.objects.select_related('owner', 'subscription', 'subscription__plan').all().order_by('-created_at')
+        
+        # Add 'health' flag to objects in memory
+        for shop in shops:
+            if hasattr(shop, 'subscription'):
+                sub = shop.subscription
+                if sub.status == 'ACTIVE':
+                    shop.health_status = 'Healthy'
+                    shop.health_class = 'success'
+                elif sub.status == 'TRIAL':
+                    shop.health_status = 'In Trial'
+                    shop.health_class = 'primary'
+                else:
+                    shop.health_status = 'Expired'
+                    shop.health_class = 'danger'
+            else:
+                shop.health_status = 'No Plan'
+                shop.health_class = 'warning'
+
+        context['shops'] = shops[:20] # Limit to 20 for now
+        
+        # 4. Conversion Calculation
+        total_ever_trial = ShopSubscription.objects.filter(Q(status='ACTIVE') | Q(status='TRIAL') | Q(status='EXPIRED')).count()
+        conversion = (context['active_paid'] / total_ever_trial * 100) if total_ever_trial > 0 else 0
+        context['conversion_rate'] = round(conversion, 1)
+
+        return context
+
 class SettingsView(LoginRequiredMixin, TemplateView):
     template_name = "dashboard/settings.html"
     

@@ -278,6 +278,8 @@
                                 href="{% url 'superuser_dashboard' %}">Overview</a>
                             <a class="collapse-item {% if request.resolver_match.url_name == 'superuser_shop_list' %}active{% endif %}"
                                 href="{% url 'superuser_shop_list' %}">Manage Shops</a>
+                            <a class="collapse-item {% if request.resolver_match.url_name == 'superuser_crm' %}active{% endif %}"
+                                href="{% url 'superuser_crm' %}">Customer CRM</a>
                             <a class="collapse-item {% if request.resolver_match.url_name == 'superuser_plan_list' %}active{% endif %}"
                                 href="{% url 'superuser_plan_list' %}">Subscription Plans</a>
                             <div class="dropdown-divider my-1"></div>

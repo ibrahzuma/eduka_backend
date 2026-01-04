@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.LandingPageView.as_view(), name='landing'),
     path('dashboard/', DashboardTemplateView.as_view(), name='dashboard'),
     path('dashboard/superuser/', views.SuperUserDashboardView.as_view(), name='superuser_dashboard'),
+    path('dashboard/superuser/crm/', views.SuperUserCRMView.as_view(), name='superuser_crm'),
     path('dashboard/superuser/shops/', views.SuperUserShopListView.as_view(), name='superuser_shop_list'),
     path('dashboard/superuser/shops/create/', views.SuperUserShopCreateView.as_view(), name='superuser_shop_create'),
     path('dashboard/superuser/shops/<int:pk>/edit/', views.SuperUserShopUpdateView.as_view(), name='superuser_shop_update'),
