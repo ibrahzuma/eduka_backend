@@ -21,8 +21,12 @@ class Command(BaseCommand):
                 price_biannually=55000,
                 price_yearly=100000,
                 max_shops=1,
-                max_users=2,
-                max_products=200,
+                max_users=5,
+                max_products=10000,
+                features={
+                    'priority_support': True,
+                    'backup': 'Daily',
+                },
                 is_active=True
             )
             
@@ -36,9 +40,13 @@ class Command(BaseCommand):
                 price_quarterly=55000,
                 price_biannually=100000,
                 price_yearly=180000,
-                max_shops=3,
-                max_users=10,
+                max_shops=1,
+                max_users=5,
                 max_products=10000,
+                features={
+                    'priority_support': True,
+                    'backup': 'Realtime',
+                },
                 is_active=True
             )
             

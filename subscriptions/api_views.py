@@ -8,7 +8,7 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubscriptionPlan
-        fields = ['id', 'name', 'slug', 'description', 'features', 'price_display', 'cycle', 'display_price']
+        fields = ['id', 'name', 'slug', 'description', 'features', 'max_shops', 'max_users', 'price_display', 'cycle', 'display_price']
         
     def get_cycle(self, obj):
         if obj.price_daily > 0: return 'daily'

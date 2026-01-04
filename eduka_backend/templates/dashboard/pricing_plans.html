@@ -164,13 +164,13 @@
         let featuresHtml = '';
         const features = plan.features || {};
 
-        // Custom feature rendering based on known keys
-        if (features.shops) featuresHtml += `<li class="mb-3 d-flex align-items-center"><i class="bi bi-check-circle-fill text-success me-2"></i> <span>${features.shops} Shop(s)</span></li>`;
-        if (features.users) featuresHtml += `<li class="mb-3 d-flex align-items-center"><i class="bi bi-check-circle-fill text-success me-2"></i> <span>${features.users} User(s)</span></li>`;
+        // Custom feature rendering based on root fields
+        if (plan.max_shops) featuresHtml += `<li class="mb-3 d-flex align-items-center"><i class="bi bi-check-circle-fill text-success me-2"></i> <span>${plan.max_shops} Shop</span></li>`;
+        if (plan.max_users) featuresHtml += `<li class="mb-3 d-flex align-items-center"><i class="bi bi-check-circle-fill text-success me-2"></i> <span>${plan.max_users} Staffs</span></li>`;
         if (features.products) featuresHtml += `<li class="mb-3 d-flex align-items-center"><i class="bi bi-check-circle-fill text-success me-2"></i> <span>${features.products.toLocaleString()} Products</span></li>`;
 
-        // Add generic "24/7 Support"
-        featuresHtml += `<li class="mb-3 d-flex align-items-center"><i class="bi bi-check-circle-fill text-success me-2"></i> <span>24/7 Support</span></li>`;
+        // Priority Support
+        featuresHtml += `<li class="mb-3 d-flex align-items-center"><i class="bi bi-check-circle-fill text-success me-2"></i> <span>Priority Support</span></li>`;
 
 
         const cardHtml = `

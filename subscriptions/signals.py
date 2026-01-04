@@ -21,8 +21,12 @@ def create_shop_subscription(sender, instance, created, **kwargs):
                 'price_biannually': 0.00,
                 'price_yearly': 0.00,
                 'max_shops': 1,
-                'max_users': 1,
-                'max_products': 50
+                'max_users': 5,
+                'max_products': 10000,
+                'features': {
+                    'priority_support': True,
+                    'is_trial': True
+                }
             }
         )
         

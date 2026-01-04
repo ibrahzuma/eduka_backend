@@ -1,0 +1,34 @@
+--- EDUKA BACKEND DIAGNOSTIC TOOL ---
+Python: 3.14.0 (tags/v3.14.0:ebf955d, Oct  7 2025, 10:15:03) [MSC v.1944 64 bit (AMD64)]
+CWD: C:\Users\admin\Downloads\eDuka Backend
+SUCCESS: Django setup complete.
+
+--- 2. Checking Static Files ---
+Storage: whitenoise.storage.CompressedStaticFilesStorage
+Root: C:\Users\admin\Downloads\eDuka Backend\staticfiles
+STATIC_ROOT exists. Items: 4
+
+--- 3. Checking Database Integrity ---
+Users: 44
+Shops: 28
+Shops without Subscription: 1
+
+--- 4. Simulating Full Request Cycle (Client) ---
+Using User: owner2
+
+Testing URL Name: 'dashboard' ...
+Resolved URL: /dashboard/
+Status Code: 301
+OK
+
+Testing URL Name: 'shop_pricing' ...
+Resolved URL: /dashboard/pricing/
+Status Code: 301
+OK
+
+Testing URL Name: 'account_login' ...
+Resolved URL: /accounts/login/
+Status Code: 301
+OK
+
+--- DIAGNOSIS COMPLETE ---

@@ -18,8 +18,8 @@ class SubscriptionPlan(models.Model):
     
     # Feature Gating & Limits
     max_shops = models.IntegerField(default=1)
-    max_users = models.IntegerField(default=1)
-    max_products = models.IntegerField(default=100)
+    max_users = models.IntegerField(default=5)
+    max_products = models.IntegerField(default=10000)
     features = models.JSONField(default=dict, blank=True)
 
     is_active = models.BooleanField(default=True)
